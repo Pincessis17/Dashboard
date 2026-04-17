@@ -1,815 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ama & Kwasi — Accountability</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root {
-    --pink: #E8547A;
-    --pink-light: #FDE8EE;
-    --pink-mid: #F4B8C8;
-    --green: #2BAE82;
-    --green-light: #E3F7F0;
-    --green-mid: #96DCC4;
-    --purple: #7C6FE0;
-    --purple-light: #EDEAFD;
-    --amber: #F0A030;
-    --amber-light: #FEF3E2;
-    --bg: #FAF9F7;
-    --surface: #FFFFFF;
-    --border: rgba(0,0,0,0.07);
-    --text: #1A1A1A;
-    --muted: #888;
-    --subtle: #C8C8C8;
-    --radius: 18px;
-    --radius-sm: 10px;
-    --shadow: 0 2px 20px rgba(0,0,0,0.06);
-    --shadow-lg: 0 8px 40px rgba(0,0,0,0.10);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-  }
+:root{
+  --pink:#E8547A;--pink-light:#FDE8EE;
+  --green:#2BAE82;--green-light:#E3F7F0;
+  --purple:#7C6FE0;--purple-light:#EDEAFD;
+  --amber:#F0A030;--amber-light:#FEF3E2;
+  --bg:#FAF9F7;--surface:#fff;--border:rgba(0,0,0,.08);
+  --text:#1A1A1A;--muted:#888;--subtle:#ccc;
+  --r:16px;--r-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
 
-  /* ── LAYOUT ── */
-  .shell { display: flex; min-height: 100vh; }
-  .sidebar {
-    width: 220px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 28px 0;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    flex-shrink: 0;
-  }
-  .main { flex: 1; padding: 32px 28px; overflow-y: auto; max-width: 900px; }
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:40px;text-align:center;max-width:420px;width:90%}
+.login-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:32px}
+.login-avatars{display:flex;gap:16px;justify-content:center}
+.login-av{flex:1;padding:24px 16px;border-radius:var(--r);border:2px solid var(--border);cursor:pointer;transition:all .2s;background:var(--bg)}
+.login-av:hover{transform:translateY(-3px)}
+.login-av.ama:hover{border-color:var(--pink);background:var(--pink-light)}
+.login-av.kwasi:hover{border-color:var(--green);background:var(--green-light)}
+.login-av .circle{width:64px;height:64px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.login-av.ama .circle{background:var(--pink-light);color:var(--pink)}
+.login-av.kwasi .circle{background:var(--green-light);color:var(--green)}
+.login-av .av-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.login-av .av-role{font-size:12px;color:var(--muted)}
 
-  /* ── SIDEBAR ── */
-  .brand {
-    padding: 0 24px 28px;
-    border-bottom: 1px solid var(--border);
-  }
-  .brand-name {
-    
-    font-size: 17px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-    color: var(--text);
-    line-height: 1.2;
-  }
-  .brand-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .brand-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--pink); display: inline-block; margin-right: 4px;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+#app-shell{display:none}
+.shell{display:flex;min-height:100vh}
+.sidebar{width:215px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:sticky;top:0;height:100vh;flex-shrink:0}
+.main{flex:1;padding:28px 24px;overflow-y:auto}
 
-  .nav-section { padding: 20px 12px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--subtle); font-weight: 500; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 24px; cursor: pointer; border-radius: 0;
-    font-size: 13px; color: var(--muted); font-weight: 400;
-    transition: all .15s; position: relative;
-  }
-  .nav-item:hover { color: var(--text); background: var(--bg); }
-  .nav-item.active {
-    color: var(--pink); font-weight: 500;
-    background: var(--pink-light);
-  }
-  .nav-item.active::before {
-    content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
-    width: 3px; background: var(--pink); border-radius: 0 3px 3px 0;
-  }
-  .nav-icon { width: 16px; height: 16px; opacity: .7; flex-shrink: 0; }
-  .nav-item.active .nav-icon { opacity: 1; }
+.brand{padding:0 20px 20px;border-bottom:1px solid var(--border)}
+.brand-name{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--pink);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.who-badge{margin:14px 20px 0;padding:8px 12px;border-radius:var(--r-sm);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+.who-badge.ama{background:var(--pink-light);color:var(--pink)}
+.who-badge.kwasi{background:var(--green-light);color:var(--green)}
+.who-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.who-badge.ama .who-av{background:var(--pink);color:#fff}
+.who-badge.kwasi .who-av{background:var(--green);color:#fff}
+.nav-sec{padding:18px 12px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--subtle)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;position:relative;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:var(--bg)}
+.nav-item.active-ama{color:var(--pink);font-weight:500;background:var(--pink-light)}
+.nav-item.active-kwasi{color:var(--green);font-weight:500;background:var(--green-light)}
+.nav-item.active-ama::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--pink);border-radius:0 3px 3px 0}
+.nav-item.active-kwasi::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--green);border-radius:0 3px 3px 0}
+.nav-ico{width:15px;height:15px;flex-shrink:0;opacity:.6}
+.sidebar-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.av-xs{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.av-a{background:var(--pink-light);color:var(--pink)}
+.av-k{background:var(--green-light);color:var(--green)}
+.sb-name{font-size:12px;font-weight:500}
+.sb-streak{font-size:11px;color:var(--muted);margin-left:auto}
+.online-dot{width:7px;height:7px;border-radius:50%;background:var(--subtle);display:inline-block;margin-left:3px;vertical-align:middle;transition:background .3s}
+.online-dot.on{background:var(--green)}
+.switch-btn{width:100%;margin-top:10px;padding:7px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:11px;color:var(--muted);cursor:pointer}
+.switch-btn:hover{background:var(--border)}
 
-  .sidebar-avatars { margin-top: auto; padding: 20px 24px; border-top: 1px solid var(--border); }
-  .sidebar-avatar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .av-sm { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
-  .av-a { background: var(--pink-light); color: var(--pink); }
-  .av-k { background: var(--green-light); color: var(--green); }
-  .av-name { font-size: 12px; font-weight: 500; color: var(--text); }
-  .av-streak { font-size: 11px; color: var(--muted); margin-left: auto; }
+.page-header{margin-bottom:22px}
+.page-title{font-size:24px;font-weight:800;letter-spacing:-.4px}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.av-lg{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
 
-  /* ── PAGE HEADER ── */
-  .page-header { margin-bottom: 24px; }
-  .page-title {  font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
-  .page-date { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:transform .15s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:800;line-height:1}
+.stat-sub2{font-size:11px;color:var(--muted);margin-top:3px}
+.sbar{height:3px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:3px;transition:width .5s}
 
-  /* ── STAT CARDS ── */
-  .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 20px; }
-  .stat-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 18px 16px;
-    transition: transform .15s;
-  }
-  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
-  .stat-value {  font-size: 28px; font-weight: 800; line-height: 1; }
-  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .stat-bar { height: 3px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
-  .stat-bar-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.streak-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.streak-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.streak-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.s-name{font-size:14px;font-weight:700}
+.s-sub{font-size:11px;color:var(--muted)}
+.s-big{font-size:30px;font-weight:800;margin-left:auto;line-height:1}
+.dots-row{display:flex;gap:4px;flex-wrap:wrap}
+.ddot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;transition:transform .15s;user-select:none;border:1px solid var(--border)}
+.ddot.mine{cursor:pointer}
+.ddot.mine:hover{transform:scale(1.2)}
+.ddot.off{background:var(--bg);color:var(--subtle)}
+.ddot.on-a{background:var(--pink);color:#fff;border-color:var(--pink)}
+.ddot.on-k{background:var(--green);color:#fff;border-color:var(--green)}
+.s-note{font-size:10px;color:var(--subtle);margin-top:8px}
 
-  /* ── CHARTS GRID ── */
-  .charts-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  .chart-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-  }
-  .chart-card-title {
-     font-size: 13px; font-weight: 700;
-    color: var(--text); margin-bottom: 4px; letter-spacing: -0.2px;
-  }
-  .chart-legend { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-  .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
-  .leg-sq { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-  .chart-wrap { position: relative; }
+.tasks-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.task-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.tp-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tp-name{font-size:14px;font-weight:700}
+.tp-prog{font-size:12px;font-weight:600;margin-left:auto}
+.tp-bar{height:3px;background:var(--border);border-radius:3px;margin-bottom:12px;overflow:hidden}
+.tp-fill{height:100%;border-radius:3px;transition:width .4s}
+.task-list{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;min-height:36px}
+.t-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--r-sm);background:var(--bg);border:1px solid transparent;transition:border-color .15s}
+.t-item.mine{cursor:pointer}
+.t-item.mine:hover{border-color:var(--border)}
+.t-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.t-check.ca{background:var(--pink);border-color:var(--pink)}
+.t-check.ck{background:var(--green);border-color:var(--green)}
+.t-check svg{display:none}
+.t-check.ca svg,.t-check.ck svg{display:block}
+.t-txt{font-size:13px;flex:1}
+.t-txt.done{text-decoration:line-through;color:var(--subtle)}
+.cpill{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;flex-shrink:0}
+.c-health{background:var(--green-light);color:var(--green)}
+.c-work{background:var(--purple-light);color:var(--purple)}
+.c-personal{background:var(--pink-light);color:var(--pink)}
+.c-social{background:var(--amber-light);color:var(--amber)}
+.t-del{background:none;border:none;cursor:pointer;color:var(--subtle);font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.t-item.mine:hover .t-del{opacity:1}
+.add-form{display:flex;flex-direction:column;gap:7px}
+.add-inputs{display:flex;gap:6px}
+.add-inputs input,.add-inputs select{padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:12px;color:var(--text);outline:none}
+.add-inputs input{flex:1}
+.btn-a{padding:8px 14px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;background:var(--pink);color:#fff}
+.btn-k{padding:8px 14px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;background:var(--green);color:#fff}
+.btn-a:hover,.btn-k:hover{opacity:.85}
+.locked-note{font-size:11px;color:var(--subtle);font-style:italic;padding:6px 0}
+.empty-msg{font-size:12px;color:var(--subtle);text-align:center;padding:14px}
 
-  /* ── STREAK SECTION ── */
-  .streak-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  .streak-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-  }
-  .streak-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .av-lg { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
-  .streak-info .name {  font-size: 15px; font-weight: 700; }
-  .streak-info .sub { font-size: 11px; color: var(--muted); }
-  .streak-big {  font-size: 32px; font-weight: 800; margin-left: auto; line-height: 1; }
-  .dots-grid { display: flex; gap: 5px; flex-wrap: wrap; }
-  .day-dot {
-    width: 26px; height: 26px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 9px; font-weight: 600; cursor: pointer;
-    transition: transform .15s, box-shadow .15s;
-    user-select: none;
-  }
-  .day-dot:hover { transform: scale(1.2); }
-  .day-dot.off { background: var(--bg); color: var(--subtle); border: 1px solid var(--border); }
-  .day-dot.on-a { background: var(--pink); color: white; }
-  .day-dot.on-k { background: var(--green); color: white; }
-  .streak-note { font-size: 10px; color: var(--subtle); margin-top: 10px; }
+.kudos-wrap{display:grid;grid-template-columns:1fr 320px;gap:12px}
+.kudos-feed{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.kf-title{font-size:14px;font-weight:700;margin-bottom:12px}
+.kmsgs{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;max-height:400px;overflow-y:auto}
+.kmsg{padding:11px 13px;border-radius:var(--r-sm);animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.kmsg.fa{background:var(--pink-light);border-left:3px solid var(--pink)}
+.kmsg.fk{background:var(--green-light);border-left:3px solid var(--green)}
+.kmsg-txt{font-size:13px;line-height:1.5}
+.kmsg-meta{font-size:10px;color:var(--muted);margin-top:4px}
+.kudos-compose{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px}
+.kc-title{font-size:14px;font-weight:700}
+.kudos-compose textarea{padding:10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;resize:none;min-height:80px;line-height:1.5;width:100%}
+.send-btn{padding:10px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:#fff;transition:opacity .15s}
+.send-btn:hover{opacity:.85}
 
-  /* ── TASKS VIEW ── */
-  .tasks-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .task-panel {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-  }
-  .task-panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .task-panel-name {  font-size: 15px; font-weight: 700; }
-  .task-progress { margin-left: auto; font-size: 12px; font-weight: 600; }
-  .task-prog-bar { height: 3px; background: var(--border); border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
-  .task-prog-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
-  .task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; min-height: 40px; }
-  .task-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px; border-radius: var(--radius-sm);
-    background: var(--bg); cursor: pointer;
-    transition: background .15s, transform .1s;
-    border: 1px solid transparent;
-  }
-  .task-item:hover { transform: translateX(2px); border-color: var(--border); }
-  .task-check {
-    width: 20px; height: 20px; border-radius: 50%;
-    border: 1.5px solid var(--subtle); display: flex; align-items: center;
-    justify-content: center; flex-shrink: 0; transition: all .2s;
-  }
-  .task-check.done-a { background: var(--pink); border-color: var(--pink); }
-  .task-check.done-k { background: var(--green); border-color: var(--green); }
-  .task-check svg { display: none; }
-  .task-check.done-a svg, .task-check.done-k svg { display: block; }
-  .task-text { font-size: 13px; flex: 1; transition: color .2s; }
-  .task-text.done { text-decoration: line-through; color: var(--subtle); }
-  .cat-pill {
-    font-size: 10px; padding: 2px 7px; border-radius: 20px;
-    font-weight: 500; flex-shrink: 0;
-  }
-  .cat-health { background: var(--green-light); color: var(--green); }
-  .cat-work { background: var(--purple-light); color: var(--purple); }
-  .cat-personal { background: var(--pink-light); color: var(--pink); }
-  .cat-social { background: var(--amber-light); color: var(--amber); }
-  .task-delete {
-    width: 18px; height: 18px; border-radius: 50%; background: transparent;
-    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity .15s; flex-shrink: 0; color: var(--muted);
-    font-size: 14px; line-height: 1;
-  }
-  .task-item:hover .task-delete { opacity: 1; }
+.toast{position:fixed;bottom:20px;right:20px;padding:10px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:#fff;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
 
-  .add-task-form { display: flex; flex-direction: column; gap: 8px; }
-  .add-task-inputs { display: flex; gap: 6px; }
-  .add-task-inputs input {
-    flex: 1; padding: 9px 12px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: var(--bg);
-     font-size: 12px; color: var(--text);
-    outline: none; transition: border-color .15s;
-  }
-  .add-task-inputs input:focus { border-color: var(--pink); }
-  .add-task-inputs select {
-    padding: 9px 10px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: var(--bg);
-     font-size: 12px; color: var(--text);
-    outline: none; cursor: pointer;
-  }
-  .btn-add-a, .btn-add-k {
-    padding: 9px 16px; border-radius: var(--radius-sm); border: none;
-     font-size: 12px; font-weight: 500;
-    cursor: pointer; transition: opacity .15s, transform .1s; white-space: nowrap;
-  }
-  .btn-add-a { background: var(--pink); color: white; }
-  .btn-add-k { background: var(--green); color: white; }
-  .btn-add-a:hover, .btn-add-k:hover { opacity: .85; }
-  .btn-add-a:active, .btn-add-k:active { transform: scale(.97); }
-
-  /* ── KUDOS VIEW ── */
-  .kudos-layout { display: grid; grid-template-columns: 1fr 360px; gap: 14px; }
-  .kudos-feed {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-  }
-  .kudos-feed-title {  font-size: 15px; font-weight: 700; margin-bottom: 14px; }
-  .kudos-messages { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  .kudos-msg {
-    padding: 12px 14px; border-radius: var(--radius-sm);
-    animation: fadeSlide .3s ease;
-  }
-  @keyframes fadeSlide { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
-  .kudos-msg.from-a { background: var(--pink-light); border-left: 3px solid var(--pink); }
-  .kudos-msg.from-k { background: var(--green-light); border-left: 3px solid var(--green); }
-  .kudos-msg-text { font-size: 13px; color: var(--text); line-height: 1.5; }
-  .kudos-msg-meta { font-size: 10px; color: var(--muted); margin-top: 5px; }
-  .kudos-compose {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .kudos-compose-title {  font-size: 15px; font-weight: 700; }
-  .kudos-compose textarea {
-    width: 100%; padding: 12px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: var(--bg);
-     font-size: 13px; color: var(--text);
-    outline: none; resize: none; line-height: 1.5; min-height: 90px;
-    transition: border-color .15s;
-  }
-  .kudos-compose textarea:focus { border-color: var(--pink); }
-  .kudos-btns { display: flex; gap: 8px; }
-  .kudos-btns button {
-    flex: 1; padding: 10px; border-radius: var(--radius-sm);
-    border: none;  font-size: 12px;
-    font-weight: 500; cursor: pointer; transition: opacity .15s, transform .1s;
-  }
-  .kudos-btns button:hover { opacity: .85; }
-  .kudos-btns button:active { transform: scale(.97); }
-  .btn-k-a { background: var(--pink); color: white; }
-  .btn-k-k { background: var(--green); color: white; }
-  .kudos-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 24px; }
-
-  /* ── EMPTY STATES ── */
-  .empty-tasks { font-size: 12px; color: var(--subtle); text-align: center; padding: 16px 0; }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    padding: 12px 18px; border-radius: var(--radius-sm);
-    font-size: 13px; font-weight: 500; color: white;
-    opacity: 0; transform: translateY(10px);
-    transition: all .25s; pointer-events: none; z-index: 999;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 700px) {
-    .sidebar { display: none; }
-    .main { padding: 16px; }
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .charts-2col, .streak-row, .tasks-2col, .kudos-layout { grid-template-columns: 1fr; }
-  }
+@media(max-width:680px){
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .streak-grid,.tasks-2,.kudos-wrap{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<div class="shell">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-name"><span class="brand-dot"></span>Ama &amp; Kwasi</div>
-      <div class="brand-sub">accountability partners</div>
-    </div>
-
-    <div class="nav-section">Menu</div>
-    <div class="nav-item active" onclick="navigate('overview')" id="nav-overview">
-      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
-      Overview
-    </div>
-    <div class="nav-item" onclick="navigate('tasks')" id="nav-tasks">
-      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
-      Micro Goals
-    </div>
-    <div class="nav-item" onclick="navigate('kudos')" id="nav-kudos">
-      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13.5S2 10 2 5.5a3 3 0 016 0 3 3 0 016 0c0 4.5-6 8-6 8z"/></svg>
-      Send Love
-    </div>
-
-    <div class="sidebar-avatars">
-      <div class="sidebar-avatar-row">
-        <div class="av-sm av-a">A</div>
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-title">Ama &amp; Kwasi</div>
+    <div class="login-sub">Who are you today?</div>
+    <div class="login-avatars">
+      <div class="login-av ama" onclick="login('ama')">
+        <div class="circle">A</div>
         <div class="av-name">Ama</div>
-        <div class="av-streak" id="sb-ama-streak">6 🔥</div>
+        <div class="av-role">accountability partner</div>
       </div>
-      <div class="sidebar-avatar-row">
-        <div class="av-sm av-k">K</div>
+      <div class="login-av kwasi" onclick="login('kwasi')">
+        <div class="circle">K</div>
         <div class="av-name">Kwasi</div>
-        <div class="av-streak" id="sb-kwasi-streak">4 🔥</div>
+        <div class="av-role">accountability partner</div>
       </div>
     </div>
-  </aside>
+  </div>
+</div>
 
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- OVERVIEW PAGE -->
-    <div id="page-overview">
-      <div class="page-header">
-        <div class="page-title">Overview</div>
-        <div class="page-date" id="today-label"></div>
+<!-- APP -->
+<div id="app-shell">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-name"><span class="bdot"></span>Ama &amp; Kwasi</div>
+        <div class="brand-sub">accountability partners</div>
       </div>
-
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">Ama's streak</div>
-          <div class="stat-value" style="color:var(--pink)" id="stat-ama-streak">6</div>
-          <div class="stat-sub">days in a row</div>
-          <div class="stat-bar"><div class="stat-bar-fill" id="bar-ama-streak" style="background:var(--pink);width:67%"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Kwasi's streak</div>
-          <div class="stat-value" style="color:var(--green)" id="stat-kwasi-streak">4</div>
-          <div class="stat-sub">days in a row</div>
-          <div class="stat-bar"><div class="stat-bar-fill" id="bar-kwasi-streak" style="background:var(--green);width:44%"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Done today</div>
-          <div class="stat-value" style="color:var(--purple)" id="stat-done">0</div>
-          <div class="stat-sub">combined goals</div>
-          <div class="stat-bar"><div class="stat-bar-fill" id="bar-done" style="background:var(--purple);width:0%"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Completion</div>
-          <div class="stat-value" style="color:var(--amber)" id="stat-rate">0%</div>
-          <div class="stat-sub">today's rate</div>
-          <div class="stat-bar"><div class="stat-bar-fill" id="bar-rate" style="background:var(--amber);width:0%"></div></div>
-        </div>
+      <div id="who-badge" class="who-badge"></div>
+      <div class="nav-sec">Menu</div>
+      <button class="nav-item" id="nav-overview" onclick="goTo('overview')">
+        <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" id="nav-tasks" onclick="goTo('tasks')">
+        <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+        Micro Goals
+      </button>
+      <button class="nav-item" id="nav-kudos" onclick="goTo('kudos')">
+        <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13.5S2 10 2 5.5a3 3 0 016 0 3 3 0 016 0c0 4.5-6 8-6 8z"/></svg>
+        Send Love
+      </button>
+      <div class="sidebar-bottom">
+        <div class="sb-row"><div class="av-xs av-a">A</div><span class="sb-name">Ama</span><span class="sb-streak" id="sb-ama">— 🔥</span><span class="online-dot" id="dot-ama"></span></div>
+        <div class="sb-row"><div class="av-xs av-k">K</div><span class="sb-name">Kwasi</span><span class="sb-streak" id="sb-kwasi">— 🔥</span><span class="online-dot" id="dot-kwasi"></span></div>
+        <button class="switch-btn" onclick="switchUser()">Switch user</button>
       </div>
+    </aside>
 
-      <div class="charts-2col">
-        <div class="chart-card">
-          <div class="chart-card-title">Weekly goals completed</div>
-          <div class="chart-legend">
-            <span class="leg"><span class="leg-sq" style="background:var(--pink)"></span>Ama</span>
-            <span class="leg"><span class="leg-sq" style="background:var(--green)"></span>Kwasi</span>
-          </div>
-          <div class="chart-wrap" style="height:170px"><canvas id="chart-weekly" role="img" aria-label="Weekly goals bar chart">Weekly goals comparison.</canvas></div>
+    <main class="main">
+      <!-- OVERVIEW -->
+      <div id="pg-overview" style="display:none">
+        <div class="page-header">
+          <div class="page-title">Overview</div>
+          <div class="page-sub" id="today-lbl"></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-card-title">Goal category split</div>
-          <div class="chart-legend">
-            <span class="leg"><span class="leg-sq" style="background:var(--green)"></span>Health 32%</span>
-            <span class="leg"><span class="leg-sq" style="background:var(--purple)"></span>Work 28%</span>
-            <span class="leg"><span class="leg-sq" style="background:var(--pink)"></span>Personal 22%</span>
-            <span class="leg"><span class="leg-sq" style="background:var(--amber)"></span>Social 18%</span>
-          </div>
-          <div class="chart-wrap" style="height:170px"><canvas id="chart-donut" role="img" aria-label="Goal category donut chart">Category split.</canvas></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-lbl">Ama's streak</div><div class="stat-val" style="color:var(--pink)" id="sv-as">—</div><div class="stat-sub2">days in a row</div><div class="sbar"><div class="sbar-fill" id="sfb-as" style="background:var(--pink);width:0%"></div></div></div>
+          <div class="stat-card"><div class="stat-lbl">Kwasi's streak</div><div class="stat-val" style="color:var(--green)" id="sv-ks">—</div><div class="stat-sub2">days in a row</div><div class="sbar"><div class="sbar-fill" id="sfb-ks" style="background:var(--green);width:0%"></div></div></div>
+          <div class="stat-card"><div class="stat-lbl">Done today</div><div class="stat-val" style="color:var(--purple)" id="sv-done">—</div><div class="stat-sub2">combined goals</div><div class="sbar"><div class="sbar-fill" id="sfb-done" style="background:var(--purple);width:0%"></div></div></div>
+          <div class="stat-card"><div class="stat-lbl">Completion</div><div class="stat-val" style="color:var(--amber)" id="sv-rate">—</div><div class="stat-sub2">today's rate</div><div class="sbar"><div class="sbar-fill" id="sfb-rate" style="background:var(--amber);width:0%"></div></div></div>
         </div>
-      </div>
-
-      <div class="charts-2col">
-        <div class="chart-card">
-          <div class="chart-card-title">30-day completion trend</div>
-          <div class="chart-legend">
-            <span class="leg"><span class="leg-sq" style="background:var(--pink)"></span>Ama</span>
-            <span class="leg"><span class="leg-sq" style="background:var(--green);border:1px dashed var(--green)"></span>Kwasi</span>
+        <div class="streak-grid">
+          <div class="streak-card">
+            <div class="streak-hdr"><div class="av-lg av-a">A</div><div><div class="s-name">Ama</div><div class="s-sub" id="ama-ssub">loading...</div></div><div class="s-big" style="color:var(--pink)" id="ama-sbig">—</div></div>
+            <div class="dots-row" id="dots-ama"></div>
+            <div class="s-note" id="ama-dot-note"></div>
           </div>
-          <div class="chart-wrap" style="height:150px"><canvas id="chart-trend" role="img" aria-label="30-day trend line chart">Trend over 30 days.</canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-title">Monthly goals set vs done</div>
-          <div class="chart-legend">
-            <span class="leg"><span class="leg-sq" style="background:#B8AFEC"></span>Set</span>
-            <span class="leg"><span class="leg-sq" style="background:var(--purple)"></span>Done</span>
+          <div class="streak-card">
+            <div class="streak-hdr"><div class="av-lg av-k">K</div><div><div class="s-name">Kwasi</div><div class="s-sub" id="kwasi-ssub">loading...</div></div><div class="s-big" style="color:var(--green)" id="kwasi-sbig">—</div></div>
+            <div class="dots-row" id="dots-kwasi"></div>
+            <div class="s-note" id="kwasi-dot-note"></div>
           </div>
-          <div class="chart-wrap" style="height:150px"><canvas id="chart-monthly" role="img" aria-label="Monthly goals bar chart">Monthly set vs done.</canvas></div>
         </div>
       </div>
 
-      <div class="streak-row">
-        <div class="streak-card">
-          <div class="streak-header">
-            <div class="av-lg av-a">A</div>
-            <div class="streak-info">
-              <div class="name">Ama</div>
-              <div class="sub" id="ama-streak-sub">6 day streak</div>
-            </div>
-            <div class="streak-big" style="color:var(--pink)" id="ama-streak-big">6</div>
+      <!-- TASKS -->
+      <div id="pg-tasks" style="display:none">
+        <div class="page-header"><div class="page-title">Micro Goals</div><div class="page-sub">You can only edit your own goals — you can see each other's</div></div>
+        <div class="tasks-2">
+          <div class="task-panel">
+            <div class="tp-hdr"><div class="av-lg av-a">A</div><div class="tp-name">Ama</div><div class="tp-prog" style="color:var(--pink)" id="ap">0/0</div></div>
+            <div class="tp-bar"><div class="tp-fill" id="abar" style="background:var(--pink);width:0%"></div></div>
+            <div class="task-list" id="a-list"></div>
+            <div id="a-add-form"></div>
           </div>
-          <div class="dots-grid" id="dots-ama"></div>
-          <div class="streak-note">Last 15 days — tap to toggle</div>
-        </div>
-        <div class="streak-card">
-          <div class="streak-header">
-            <div class="av-lg av-k">K</div>
-            <div class="streak-info">
-              <div class="name">Kwasi</div>
-              <div class="sub" id="kwasi-streak-sub">4 day streak</div>
-            </div>
-            <div class="streak-big" style="color:var(--green)" id="kwasi-streak-big">4</div>
+          <div class="task-panel">
+            <div class="tp-hdr"><div class="av-lg av-k">K</div><div class="tp-name">Kwasi</div><div class="tp-prog" style="color:var(--green)" id="kp">0/0</div></div>
+            <div class="tp-bar"><div class="tp-fill" id="kbar" style="background:var(--green);width:0%"></div></div>
+            <div class="task-list" id="k-list"></div>
+            <div id="k-add-form"></div>
           </div>
-          <div class="dots-grid" id="dots-kwasi"></div>
-          <div class="streak-note">Last 15 days — tap to toggle</div>
         </div>
       </div>
-    </div>
 
-    <!-- TASKS PAGE -->
-    <div id="page-tasks" style="display:none">
-      <div class="page-header">
-        <div class="page-title">Micro Goals</div>
-        <div class="page-date">Check off your goals as you crush them</div>
-      </div>
-      <div class="tasks-2col">
-        <div class="task-panel">
-          <div class="task-panel-header">
-            <div class="av-lg av-a">A</div>
-            <div class="task-panel-name">Ama</div>
-            <div class="task-progress" style="color:var(--pink)" id="ama-task-prog">0/0</div>
-          </div>
-          <div class="task-prog-bar"><div class="task-prog-fill" id="ama-task-bar" style="background:var(--pink);width:0%"></div></div>
-          <div class="task-list" id="ama-task-list"></div>
-          <div class="add-task-form">
-            <div class="add-task-inputs">
-              <input id="ama-task-input" placeholder="Add a micro goal..." />
-              <select id="ama-task-cat">
-                <option value="health">Health</option>
-                <option value="work">Work</option>
-                <option value="personal">Personal</option>
-                <option value="social">Social</option>
-              </select>
-            </div>
-            <button class="btn-add-a" onclick="addTask('a')">Add goal</button>
-          </div>
-        </div>
-        <div class="task-panel">
-          <div class="task-panel-header">
-            <div class="av-lg av-k">K</div>
-            <div class="task-panel-name">Kwasi</div>
-            <div class="task-progress" style="color:var(--green)" id="kwasi-task-prog">0/0</div>
-          </div>
-          <div class="task-prog-bar"><div class="task-prog-fill" id="kwasi-task-bar" style="background:var(--green);width:0%"></div></div>
-          <div class="task-list" id="kwasi-task-list"></div>
-          <div class="add-task-form">
-            <div class="add-task-inputs">
-              <input id="kwasi-task-input" placeholder="Add a micro goal..." />
-              <select id="kwasi-task-cat">
-                <option value="health">Health</option>
-                <option value="work">Work</option>
-                <option value="personal">Personal</option>
-                <option value="social">Social</option>
-              </select>
-            </div>
-            <button class="btn-add-k" onclick="addTask('k')">Add goal</button>
+      <!-- KUDOS -->
+      <div id="pg-kudos" style="display:none">
+        <div class="page-header"><div class="page-title">Send Love</div><div class="page-sub">Messages sync live between both of you</div></div>
+        <div class="kudos-wrap">
+          <div class="kudos-feed"><div class="kf-title">Messages</div><div class="kmsgs" id="kmsgs"><div class="empty-msg">No messages yet!</div></div></div>
+          <div class="kudos-compose">
+            <div class="kc-title">Write a message</div>
+            <textarea id="kudos-txt" placeholder="You're crushing it, keep going!"></textarea>
+            <button class="send-btn" id="send-btn" onclick="sendKudos()">Send message</button>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- KUDOS PAGE -->
-    <div id="page-kudos" style="display:none">
-      <div class="page-header">
-        <div class="page-title">Send Love</div>
-        <div class="page-date">Hype each other up</div>
-      </div>
-      <div class="kudos-layout">
-        <div class="kudos-feed">
-          <div class="kudos-feed-title">Messages</div>
-          <div class="kudos-messages" id="kudos-messages">
-            <div class="kudos-empty">No messages yet — send the first one!</div>
-          </div>
-        </div>
-        <div class="kudos-compose">
-          <div class="kudos-compose-title">Write a message</div>
-          <textarea id="kudos-text" placeholder="You're doing amazing, keep it up!"></textarea>
-          <div class="kudos-btns">
-            <button class="btn-k-a" onclick="sendKudos('Ama')">Send as Ama</button>
-            <button class="btn-k-k" onclick="sendKudos('Kwasi')">Send as Kwasi</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </main>
+    </main>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
-// ── STATE ────────────────────────────────────────────────────
-const defaultState = {
-  tasks: {
-    a: [
-      {text:'Drink 2L water', cat:'health', done:false},
-      {text:'Morning stretch 10 min', cat:'health', done:false},
-      {text:'Read 20 pages', cat:'personal', done:false},
-      {text:'Journal 5 min', cat:'personal', done:false},
-      {text:'No phone after 10pm', cat:'personal', done:false}
-    ],
-    k: [
-      {text:'Workout 30 min', cat:'health', done:false},
-      {text:'Meditate 10 min', cat:'personal', done:false},
-      {text:'Review weekly goals', cat:'work', done:false},
-      {text:'Sleep by 11pm', cat:'health', done:false},
-      {text:'Prep meals', cat:'health', done:false}
-    ]
-  },
-  dots: {
-    a: [1,1,1,0,1,1,1,1,1,0,1,1,0,1,1],
-    k: [1,0,1,1,0,1,1,0,1,1,1,0,1,1,1]
-  },
-  kudos: []
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDA4dKgccFg1Y9emT5WhzK0al7BFXhEgbw",
+  authDomain: "kwasi-ama-dashboard.firebaseapp.com",
+  databaseURL: "https://kwasi-ama-dashboard-default-rtdb.firebaseio.com",
+  projectId: "kwasi-ama-dashboard",
+  storageBucket: "kwasi-ama-dashboard.firebasestorage.app",
+  messagingSenderId: "902554231157",
+  appId: "1:902554231157:web:f0d1bb638dc6eb7277b33c"
 };
 
-let S = JSON.parse(JSON.stringify(defaultState));
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
 
-function load() {
-  try {
-    const saved = localStorage.getItem('ak_app_v2');
-    if (saved) S = JSON.parse(saved);
-  } catch(e) {}
-}
+const DL = ['M','T','W','T','F','S','S','M','T','W','T','F','S','S','T'];
+let ME = null;
+let live = { ama: {}, kwasi: {}, kudos: [] };
 
-function save() {
-  try { localStorage.setItem('ak_app_v2', JSON.stringify(S)); } catch(e) {}
-}
+// ── LOGIN ────────────────────────────────────────────────
+window.login = async function(who) {
+  ME = who;
+  sessionStorage.setItem('ak_user', who);
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
+  await boot();
+};
 
-// ── UTILS ────────────────────────────────────────────────────
-const DAY_LBL = ['M','T','W','T','F','S','S','M','T','W','T','F','S','S','T'];
+window.switchUser = function() {
+  ME = null;
+  sessionStorage.removeItem('ak_user');
+  set(ref(db, `presence/${ME}`), false).catch(()=>{});
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app-shell').style.display = 'none';
+};
 
-function calcStreak(dots) {
-  let n = 0;
-  for (let i = dots.length - 1; i >= 0; i--) { if (dots[i]) n++; else break; }
-  return n;
-}
+// ── BOOT ─────────────────────────────────────────────────
+async function boot() {
+  document.getElementById('today-lbl').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
-function showToast(msg, color) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.background = color || '#1A1A1A';
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
+  const badge = document.getElementById('who-badge');
+  badge.className = 'who-badge ' + ME;
+  badge.innerHTML = `<div class="who-av">${ME==='ama'?'A':'K'}</div>Logged in as ${ME==='ama'?'Ama':'Kwasi'}`;
+  document.getElementById('send-btn').style.background = ME==='ama' ? '#E8547A' : '#2BAE82';
 
-// ── NAVIGATION ───────────────────────────────────────────────
-function navigate(page) {
-  ['overview','tasks','kudos'].forEach(p => {
-    document.getElementById('page-' + p).style.display = p === page ? 'block' : 'none';
-    const nav = document.getElementById('nav-' + p);
-    nav.classList.toggle('active', p === page);
-  });
-}
+  // presence
+  await set(ref(db, `presence/${ME}`), true);
+  window.addEventListener('beforeunload', () => set(ref(db, `presence/${ME}`), false));
 
-// ── STREAKS ──────────────────────────────────────────────────
-function renderDots() {
-  ['a','k'].forEach(who => {
-    const container = document.getElementById('dots-' + who);
-    container.innerHTML = '';
-    S.dots[who].forEach((on, i) => {
-      const d = document.createElement('div');
-      d.className = 'day-dot ' + (on ? 'on-' + who : 'off');
-      d.textContent = DAY_LBL[i];
-      d.title = on ? 'Done!' : 'Missed';
-      d.onclick = () => {
-        S.dots[who][i] = on ? 0 : 1;
-        save(); renderDots(); updateStats();
-      };
-      container.appendChild(d);
-    });
-    updateStreakDisplay(who);
-  });
-}
-
-function updateStreakDisplay(who) {
-  const streak = calcStreak(S.dots[who]);
-  const name = who === 'a' ? 'ama' : 'kwasi';
-  document.getElementById(name + '-streak-big').textContent = streak;
-  document.getElementById(name + '-streak-sub').textContent = streak + ' day streak';
-  document.getElementById('stat-' + name + '-streak').textContent = streak;
-  document.getElementById('bar-' + name + '-streak').style.width = Math.round(Math.min(100, streak / 10 * 100)) + '%';
-  document.getElementById('sb-' + name + '-streak').textContent = streak + ' 🔥';
-}
-
-// ── TASKS ────────────────────────────────────────────────────
-function renderTasks() {
-  ['a','k'].forEach(who => {
-    const listId = who === 'a' ? 'ama-task-list' : 'kwasi-task-list';
-    const el = document.getElementById(listId);
-    const tasks = S.tasks[who];
-
-    if (!tasks.length) {
-      el.innerHTML = '<div class="empty-tasks">No goals yet — add one above!</div>';
-    } else {
-      el.innerHTML = tasks.map((t, i) => `
-        <div class="task-item" onclick="toggleTask('${who}', ${i})">
-          <div class="task-check ${t.done ? 'done-' + who : ''}">
-            <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-              <path d="M1 3L3.5 5.5L8 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <span class="task-text ${t.done ? 'done' : ''}">${t.text}</span>
-          <span class="cat-pill cat-${t.cat}">${t.cat}</span>
-          <button class="task-delete" onclick="deleteTask(event,'${who}',${i})">×</button>
-        </div>`).join('');
-    }
-
-    const done = tasks.filter(t => t.done).length;
-    const total = tasks.length;
-    const pct = total > 0 ? Math.round(done / total * 100) : 0;
-    const progId = who === 'a' ? 'ama-task-prog' : 'kwasi-task-prog';
-    const barId = who === 'a' ? 'ama-task-bar' : 'kwasi-task-bar';
-    document.getElementById(progId).textContent = done + '/' + total;
-    document.getElementById(barId).style.width = pct + '%';
-  });
-  updateStats();
-}
-
-function toggleTask(who, i) {
-  S.tasks[who][i].done = !S.tasks[who][i].done;
-  save(); renderTasks();
-  if (S.tasks[who][i].done) showToast('Goal crushed!', who === 'a' ? '#E8547A' : '#2BAE82');
-}
-
-function deleteTask(e, who, i) {
-  e.stopPropagation();
-  S.tasks[who].splice(i, 1);
-  save(); renderTasks();
-}
-
-function addTask(who) {
-  const inputId = who === 'a' ? 'ama-task-input' : 'kwasi-task-input';
-  const catId = who === 'a' ? 'ama-task-cat' : 'kwasi-task-cat';
-  const text = document.getElementById(inputId).value.trim();
-  const cat = document.getElementById(catId).value;
-  if (!text) return;
-  S.tasks[who].push({ text, cat, done: false });
-  document.getElementById(inputId).value = '';
-  save(); renderTasks();
-  showToast('Goal added!', who === 'a' ? '#E8547A' : '#2BAE82');
-}
-
-document.getElementById('ama-task-input').addEventListener('keydown', e => { if (e.key === 'Enter') addTask('a'); });
-document.getElementById('kwasi-task-input').addEventListener('keydown', e => { if (e.key === 'Enter') addTask('k'); });
-
-// ── STATS ────────────────────────────────────────────────────
-function updateStats() {
-  const all = [...S.tasks.a, ...S.tasks.k];
-  const done = all.filter(t => t.done).length;
-  const total = all.length;
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  document.getElementById('stat-done').textContent = done;
-  document.getElementById('stat-rate').textContent = pct + '%';
-  document.getElementById('bar-done').style.width = Math.round(Math.min(100, done / Math.max(1, total) * 100)) + '%';
-  document.getElementById('bar-rate').style.width = pct + '%';
-}
-
-// ── KUDOS ────────────────────────────────────────────────────
-function sendKudos(from) {
-  const text = document.getElementById('kudos-text').value.trim();
-  if (!text) return;
-  S.kudos.unshift({ from, text, time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) });
-  document.getElementById('kudos-text').value = '';
-  save(); renderKudos();
-  showToast('Message sent! 💌', from === 'Ama' ? '#E8547A' : '#2BAE82');
-}
-
-function renderKudos() {
-  const el = document.getElementById('kudos-messages');
-  if (!S.kudos.length) {
-    el.innerHTML = '<div class="kudos-empty">No messages yet — send the first one!</div>';
-    return;
+  // seed if first time
+  const snap = await get(ref(db, `users/${ME}`));
+  if (!snap.exists()) {
+    const seeds = {
+      ama: { dots:[1,1,1,0,1,1,1,1,1,0,1,1,0,1,1], tasks:[{text:'Drink 2L water',cat:'health',done:false},{text:'Morning stretch 10 min',cat:'health',done:false},{text:'Read 20 pages',cat:'personal',done:false},{text:'Journal 5 min',cat:'personal',done:false},{text:'No phone after 10pm',cat:'personal',done:false}] },
+      kwasi: { dots:[1,0,1,1,0,1,1,0,1,1,1,0,1,1,1], tasks:[{text:'Workout 30 min',cat:'health',done:false},{text:'Meditate 10 min',cat:'personal',done:false},{text:'Review weekly goals',cat:'work',done:false},{text:'Sleep by 11pm',cat:'health',done:false},{text:'Prep meals',cat:'health',done:false}] }
+    };
+    await set(ref(db, `users/${ME}`), seeds[ME]);
   }
-  el.innerHTML = S.kudos.slice(0, 20).map(k => `
-    <div class="kudos-msg from-${k.from === 'Ama' ? 'a' : 'k'}">
-      <div class="kudos-msg-text">${k.text}</div>
-      <div class="kudos-msg-meta">from ${k.from} · ${k.time}</div>
+
+  // live listeners
+  onValue(ref(db,'users/ama'), s => { live.ama = s.val()||{}; renderAll(); });
+  onValue(ref(db,'users/kwasi'), s => { live.kwasi = s.val()||{}; renderAll(); });
+  onValue(ref(db,'kudos'), s => {
+    const v = s.val();
+    live.kudos = v ? Object.values(v).sort((a,b)=>b.ts-a.ts) : [];
+    renderKudos();
+  });
+  onValue(ref(db,'presence'), s => {
+    const p = s.val()||{};
+    document.getElementById('dot-ama').className   = 'online-dot'+(p.ama  ?' on':'');
+    document.getElementById('dot-kwasi').className = 'online-dot'+(p.kwasi?' on':'');
+  });
+
+  goTo('overview');
+}
+
+// ── NAV ───────────────────────────────────────────────────
+window.goTo = function(pg) {
+  ['overview','tasks','kudos'].forEach(p => {
+    document.getElementById('pg-'+p).style.display = p===pg?'block':'none';
+    document.getElementById('nav-'+p).className = 'nav-item'+(p===pg?' active-'+ME:'');
+  });
+};
+
+// ── HELPERS ───────────────────────────────────────────────
+function calcStreak(dots) {
+  if (!dots||!dots.length) return 0;
+  let n=0; for(let i=dots.length-1;i>=0;i--){if(dots[i])n++;else break;} return n;
+}
+function getTasks(who) {
+  const d=live[who]; if(!d||!d.tasks) return [];
+  return Array.isArray(d.tasks)?d.tasks:Object.values(d.tasks);
+}
+function toast(msg,color){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=color||'#1A1A1A';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderAll() {
+  renderStreaks();
+  renderTasks();
+  renderAddForms();
+  renderStats();
+}
+
+function renderStreaks() {
+  ['ama','kwasi'].forEach(who => {
+    const dots = (live[who]||{}).dots||[];
+    const s = calcStreak(dots);
+    const isMine = who===ME;
+    const el = document.getElementById('dots-'+who);
+    el.innerHTML='';
+    dots.forEach((on,i)=>{
+      const d=document.createElement('div');
+      d.className='ddot '+(on?'on-'+who[0]:'off')+(isMine?' mine':'');
+      d.textContent=DL[i];
+      if(isMine) d.onclick=()=>toggleDot(who,i,[...dots]);
+      el.appendChild(d);
+    });
+    document.getElementById(who+'-sbig').textContent=s;
+    document.getElementById(who+'-ssub').textContent=s+' day streak';
+    document.getElementById(who+'-dot-note').textContent=isMine?'Last 15 days — tap to toggle':'Last 15 days (read only)';
+    document.getElementById('sb-'+who).textContent=s+' 🔥';
+    document.getElementById('sv-'+(who==='ama'?'as':'ks')).textContent=s;
+    document.getElementById('sfb-'+(who==='ama'?'as':'ks')).style.width=Math.min(100,s*10)+'%';
+  });
+}
+
+async function toggleDot(who,i,dots){
+  dots[i]=dots[i]?0:1;
+  await set(ref(db,`users/${who}/dots`),dots);
+}
+
+function renderTasks(){
+  ['ama','kwasi'].forEach(who=>{
+    const tasks=getTasks(who);
+    const isMine=who===ME;
+    const el=document.getElementById(who[0]+'-list');
+    const cc=who==='ama'?'ca':'ck';
+    el.innerHTML = tasks.length
+      ? tasks.map((t,i)=>`
+          <div class="t-item${isMine?' mine':''}" ${isMine?`onclick="window._toggleTask('${who}',${i})"`:''}> 
+            <div class="t-check ${t.done?cc:''}">
+              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3L3.5 5.5L8 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <span class="t-txt${t.done?' done':''}">${t.text}</span>
+            <span class="cpill c-${t.cat}">${t.cat}</span>
+            ${isMine?`<button class="t-del" onclick="event.stopPropagation();window._delTask('${who}',${i})">×</button>`:''}
+          </div>`).join('')
+      : '<div class="empty-msg">No goals yet!</div>';
+    const done=tasks.filter(t=>t.done).length, total=tasks.length;
+    const pct=total?Math.round(done/total*100):0;
+    document.getElementById(who[0]+'p').textContent=done+'/'+total;
+    document.getElementById(who[0]+'bar').style.width=pct+'%';
+  });
+}
+
+function renderAddForms(){
+  ['ama','kwasi'].forEach(who=>{
+    const el=document.getElementById(who[0]+'-add-form');
+    if(who===ME){
+      const cls=who==='ama'?'btn-a':'btn-k';
+      el.innerHTML=`<div class="add-form">
+        <div class="add-inputs">
+          <input id="${who[0]}-in" placeholder="Add a micro goal..."/>
+          <select id="${who[0]}-cat"><option value="health">Health</option><option value="work">Work</option><option value="personal">Personal</option><option value="social">Social</option></select>
+        </div>
+        <button class="${cls}" onclick="window._addTask('${who}')">Add goal</button>
+      </div>`;
+      document.getElementById(who[0]+'-in').addEventListener('keydown',e=>{if(e.key==='Enter')window._addTask(who)});
+    } else {
+      el.innerHTML=`<div class="locked-note">You can see ${who==='ama'?'Ama':'Kwasi'}'s goals but can't edit them</div>`;
+    }
+  });
+}
+
+function renderStats(){
+  const all=[...getTasks('ama'),...getTasks('kwasi')];
+  const done=all.filter(t=>t.done).length, total=all.length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('sv-done').textContent=done;
+  document.getElementById('sv-rate').textContent=pct+'%';
+  document.getElementById('sfb-done').style.width=Math.min(100,total?done/total*100:0)+'%';
+  document.getElementById('sfb-rate').style.width=pct+'%';
+}
+
+function renderKudos(){
+  const el=document.getElementById('kmsgs');
+  if(!live.kudos.length){el.innerHTML='<div class="empty-msg">No messages yet!</div>';return;}
+  el.innerHTML=live.kudos.slice(0,30).map(k=>`
+    <div class="kmsg ${k.from==='Ama'?'fa':'fk'}">
+      <div class="kmsg-txt">${k.txt}</div>
+      <div class="kmsg-meta">from ${k.from} · ${k.time}</div>
     </div>`).join('');
 }
 
-document.getElementById('kudos-text').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); sendKudos('Ama'); }
-});
+// ── TASK ACTIONS (exposed to inline onclick) ──────────────
+window._toggleTask = async function(who,i){
+  const tasks=[...getTasks(who)];
+  tasks[i]={...tasks[i],done:!tasks[i].done};
+  await set(ref(db,`users/${who}/tasks`),tasks);
+  if(tasks[i].done) toast('Goal crushed! 💪',who==='ama'?'#E8547A':'#2BAE82');
+};
 
-// ── CHARTS ───────────────────────────────────────────────────
-function buildCharts() {
-  const tick = { font: { size: 10, family: 'DM Sans' }, color: '#888' };
-  const gridColor = 'rgba(0,0,0,0.04)';
+window._delTask = async function(who,i){
+  const tasks=[...getTasks(who)];
+  tasks.splice(i,1);
+  await set(ref(db,`users/${who}/tasks`),tasks);
+};
 
-  new Chart(document.getElementById('chart-weekly'), {
-    type: 'bar',
-    data: {
-      labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7'],
-      datasets: [
-        { label: 'Ama',   data: [5,7,4,8,6,9,7], backgroundColor: '#E8547A', borderRadius: 4 },
-        { label: 'Kwasi', data: [4,5,6,5,7,6,8], backgroundColor: '#2BAE82', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: tick },
-        y: { grid: { color: gridColor }, ticks: { ...tick, stepSize: 2 }, beginAtZero: true }
-      }
-    }
-  });
+window._addTask = async function(who){
+  const inp=document.getElementById(who[0]+'-in');
+  const cat=document.getElementById(who[0]+'-cat').value;
+  const text=inp.value.trim(); if(!text)return;
+  const tasks=[...getTasks(who),{text,cat,done:false}];
+  await set(ref(db,`users/${who}/tasks`),tasks);
+  inp.value='';
+  toast('Goal added!',who==='ama'?'#E8547A':'#2BAE82');
+};
 
-  new Chart(document.getElementById('chart-donut'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Health','Work','Personal','Social'],
-      datasets: [{ data: [32,28,22,18], backgroundColor: ['#2BAE82','#7C6FE0','#E8547A','#F0A030'], borderWidth: 0, hoverOffset: 4 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '65%',
-      plugins: { legend: { display: false } }
-    }
-  });
+// ── KUDOS ─────────────────────────────────────────────────
+window.sendKudos = async function(){
+  const txt=document.getElementById('kudos-txt').value.trim(); if(!txt)return;
+  await push(ref(db,'kudos'),{from:ME==='ama'?'Ama':'Kwasi',txt,ts:Date.now(),time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+  document.getElementById('kudos-txt').value='';
+  toast('Sent! 💌',ME==='ama'?'#E8547A':'#2BAE82');
+};
 
-  const seed = n => ((n * 9301 + 49297) % 233280) / 233280;
-  const days = Array.from({ length: 30 }, (_, i) => i + 1);
-  new Chart(document.getElementById('chart-trend'), {
-    type: 'line',
-    data: {
-      labels: days,
-      datasets: [
-        { label: 'Ama',   data: days.map(i => Math.min(100, Math.round(50 + i * 1.5 + seed(i) * 10 - 5))), borderColor: '#E8547A', tension: .4, pointRadius: 0, borderWidth: 2, backgroundColor: 'transparent' },
-        { label: 'Kwasi', data: days.map(i => Math.min(100, Math.round(45 + i * 1.2 + seed(i+30) * 10 - 5))), borderColor: '#2BAE82', tension: .4, pointRadius: 0, borderDash: [4,4], borderWidth: 2, backgroundColor: 'transparent' }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { ...tick, maxTicksLimit: 6 } },
-        y: { grid: { color: gridColor }, ticks: { ...tick, callback: v => v + '%' }, min: 30, max: 100 }
-      }
-    }
-  });
-
-  new Chart(document.getElementById('chart-monthly'), {
-    type: 'bar',
-    data: {
-      labels: ['Jan','Feb','Mar','Apr'],
-      datasets: [
-        { label: 'Set',  data: [20,25,22,28], backgroundColor: '#B8AFEC', borderRadius: 4 },
-        { label: 'Done', data: [14,19,18,24], backgroundColor: '#7C6FE0', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: tick },
-        y: { grid: { color: gridColor }, ticks: { ...tick, stepSize: 5 }, beginAtZero: true }
-      }
-    }
-  });
-}
-
-// ── INIT ─────────────────────────────────────────────────────
-function init() {
-  document.getElementById('today-label').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  load();
-  renderDots();
-  renderTasks();
-  renderKudos();
-  updateStats();
-  buildCharts();
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+// ── AUTO-LOGIN ─────────────────────────────────────────────
+const saved=sessionStorage.getItem('ak_user');
+if(saved){ME=saved;document.getElementById('login-screen').style.display='none';document.getElementById('app-shell').style.display='block';boot();}
 </script>
 </body>
 </html>
