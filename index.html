@@ -88,14 +88,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .s-name{font-size:14px;font-weight:700}
 .s-sub{font-size:11px;color:var(--muted)}
 .s-big{font-size:30px;font-weight:800;margin-left:auto;line-height:1}
-.dots-row{display:flex;gap:4px;flex-wrap:wrap}
-.ddot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;transition:transform .15s;user-select:none;border:1px solid var(--border)}
-.ddot.mine{cursor:pointer}
-.ddot.mine:hover{transform:scale(1.2)}
-.ddot.off{background:var(--bg);color:var(--subtle)}
-.ddot.on-a{background:var(--pink);color:#fff;border-color:var(--pink)}
-.ddot.on-k{background:var(--green);color:#fff;border-color:var(--green)}
-.s-note{font-size:10px;color:var(--subtle);margin-top:8px}
+.streak-history{display:flex;gap:3px;margin-top:4px}
+.sh-bar{height:6px;flex:1;border-radius:3px;transition:background .2s}
+.sh-on-a{background:var(--pink)}
+.sh-on-k{background:var(--green)}
+.sh-off{background:var(--border)}
 
 .tasks-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .task-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
@@ -151,11 +148,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .toast{position:fixed;bottom:20px;right:20px;padding:10px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:#fff;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999}
 .toast.show{opacity:1;transform:translateY(0)}
 
-@media(max-width:680px){
-  .sidebar{display:none}
-  .stats-row{grid-template-columns:1fr 1fr}
-  .streak-grid,.tasks-2,.kudos-wrap{grid-template-columns:1fr}
-}
+
 </style>
 </head>
 <body>
@@ -208,15 +201,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         <button class="switch-btn" onclick="switchUser()">Switch user</button>
       </div>
     </aside>
-
-    <!-- MOBILE HEADER -->
-    <div class="mobile-header" id="mobile-header">
-      <div class="mobile-title" id="mobile-page-title">Overview</div>
-      <div class="mobile-badge" id="mobile-badge"></div>
-    </div>
-
     <main class="main">
-      <div class="mobile-content">
       <!-- OVERVIEW -->
       <div id="pg-overview" style="display:none">
         <div class="page-header">
@@ -231,14 +216,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
         </div>
         <div class="streak-grid">
           <div class="streak-card">
-            <div class="streak-hdr"><div class="av-lg av-a">A</div><div><div class="s-name">Ama</div><div class="s-sub" id="ama-ssub">loading...</div></div><div class="s-big" style="color:var(--pink)" id="ama-sbig">—</div></div>
-            <div class="dots-row" id="dots-ama"></div>
-            <div class="s-note" id="ama-dot-note"></div>
+            <div class="streak-hdr">
+              <div class="av-lg av-a">A</div>
+              <div><div class="s-name">Ama</div><div class="s-sub" id="ama-ssub">loading...</div></div>
+              <div class="s-big" style="color:var(--pink)" id="ama-sbig">—</div>
+            </div>
+            <div class="streak-history" id="dots-ama"></div>
           </div>
           <div class="streak-card">
-            <div class="streak-hdr"><div class="av-lg av-k">K</div><div><div class="s-name">Kwasi</div><div class="s-sub" id="kwasi-ssub">loading...</div></div><div class="s-big" style="color:var(--green)" id="kwasi-sbig">—</div></div>
-            <div class="dots-row" id="dots-kwasi"></div>
-            <div class="s-note" id="kwasi-dot-note"></div>
+            <div class="streak-hdr">
+              <div class="av-lg av-k">K</div>
+              <div><div class="s-name">Kwasi</div><div class="s-sub" id="kwasi-ssub">loading...</div></div>
+              <div class="s-big" style="color:var(--green)" id="kwasi-sbig">—</div>
+            </div>
+            <div class="streak-history" id="dots-kwasi"></div>
           </div>
         </div>
       </div>
@@ -274,28 +265,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
           </div>
         </div>
       </div>
-      </div><!-- end mobile-content -->
     </main>
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav" id="bottom-nav">
-      <button class="bn-item" id="bn-overview" onclick="goTo('overview')">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
-        <span>Overview</span>
-      </button>
-      <button class="bn-item" id="bn-tasks" onclick="goTo('tasks')">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
-        <span>Goals</span>
-      </button>
-      <button class="bn-item" id="bn-kudos" onclick="goTo('kudos')">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13.5S2 10 2 5.5a3 3 0 016 0 3 3 0 016 0c0 4.5-6 8-6 8z"/></svg>
-        <span>Send Love</span>
-      </button>
-      <button class="bn-item" id="bn-switch" onclick="switchUser()">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5"/></svg>
-        <span>Switch</span>
-      </button>
-    </nav>
   </div>
 </div>
 
@@ -423,28 +393,21 @@ function renderStreaks() {
   ['ama','kwasi'].forEach(who => {
     const dots = (live[who]||{}).dots||[];
     const s = calcStreak(dots);
-    const isMine = who===ME;
     const el = document.getElementById('dots-'+who);
-    el.innerHTML='';
-    dots.forEach((on,i)=>{
-      const d=document.createElement('div');
-      d.className='ddot '+(on?'on-'+who[0]:'off')+(isMine?' mine':'');
-      d.textContent=DL[i];
-      if(isMine) d.onclick=()=>toggleDot(who,i,[...dots]);
-      el.appendChild(d);
-    });
+    if(el){
+      el.innerHTML='';
+      dots.forEach(on=>{
+        const b=document.createElement('div');
+        b.className='sh-bar '+(on?'sh-on-'+who[0]:'sh-off');
+        el.appendChild(b);
+      });
+    }
     document.getElementById(who+'-sbig').textContent=s;
     document.getElementById(who+'-ssub').textContent=s+' day streak';
-    document.getElementById(who+'-dot-note').textContent=isMine?'Last 15 days — tap to toggle':'Last 15 days (read only)';
     document.getElementById('sb-'+who).textContent=s+' 🔥';
     document.getElementById('sv-'+(who==='ama'?'as':'ks')).textContent=s;
     document.getElementById('sfb-'+(who==='ama'?'as':'ks')).style.width=Math.min(100,s*10)+'%';
   });
-}
-
-async function toggleDot(who,i,dots){
-  dots[i]=dots[i]?0:1;
-  await set(ref(db,`users/${who}/dots`),dots);
 }
 
 function renderTasks(){
