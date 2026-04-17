@@ -79,7 +79,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 .page-sub{font-size:12px;color:var(--muted);margin-top:3px}
 
 /* STAT CARDS */
-.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.stats-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.chart-legend{display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:4px;font-size:11px;color:#888}
+.leg-sq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:transform .15s}
 .stat-card:hover{transform:translateY(-2px)}
 .stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
@@ -231,6 +234,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
           <div class="page-title">Overview</div>
           <div class="page-sub" id="today-lbl"></div>
         </div>
+
+        <!-- 6 individual stat cards -->
         <div class="stats-row">
           <div class="stat-card">
             <div class="stat-lbl">Ama's streak</div>
@@ -245,16 +250,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
             <div class="mini-bar"><div class="mini-bar-fill" id="bar-ks" style="background:var(--green);width:0%"></div></div>
           </div>
           <div class="stat-card">
-            <div class="stat-lbl">Done today</div>
-            <div class="stat-val" style="color:var(--purple)" id="stat-done">—</div>
-            <div class="stat-hint">combined goals</div>
-            <div class="mini-bar"><div class="mini-bar-fill" id="bar-done" style="background:var(--purple);width:0%"></div></div>
+            <div class="stat-lbl">Ama's goals</div>
+            <div class="stat-val" style="color:var(--pink)" id="stat-a-done">—</div>
+            <div class="stat-hint" id="stat-a-hint">of 0 done today</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-a-done" style="background:var(--pink);width:0%"></div></div>
           </div>
           <div class="stat-card">
-            <div class="stat-lbl">Completion</div>
-            <div class="stat-val" style="color:var(--amber)" id="stat-rate">—</div>
+            <div class="stat-lbl">Kwasi's goals</div>
+            <div class="stat-val" style="color:var(--green)" id="stat-k-done">—</div>
+            <div class="stat-hint" id="stat-k-hint">of 0 done today</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-k-done" style="background:var(--green);width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Ama's completion</div>
+            <div class="stat-val" style="color:var(--pink)" id="stat-a-rate">—</div>
             <div class="stat-hint">today's rate</div>
-            <div class="mini-bar"><div class="mini-bar-fill" id="bar-rate" style="background:var(--amber);width:0%"></div></div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-a-rate" style="background:var(--pink);width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Kwasi's completion</div>
+            <div class="stat-val" style="color:var(--green)" id="stat-k-rate">—</div>
+            <div class="stat-hint">today's rate</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-k-rate" style="background:var(--green);width:0%"></div></div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="two-col" style="margin-bottom:14px">
+          <div class="card">
+            <div class="card-title">Goal completion — today</div>
+            <div class="chart-legend">
+              <span class="leg"><span class="leg-sq" style="background:#E8547A"></span>Ama</span>
+              <span class="leg"><span class="leg-sq" style="background:#2BAE82"></span>Kwasi</span>
+            </div>
+            <div style="position:relative;height:180px">
+              <canvas id="chart-completion" aria-label="Today goal completion bar chart">Goal completion chart.</canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Goal categories</div>
+            <div class="chart-legend" id="cat-legend"></div>
+            <div style="position:relative;height:180px">
+              <canvas id="chart-categories" aria-label="Goal categories donut chart">Categories chart.</canvas>
+            </div>
           </div>
         </div>
 
@@ -343,6 +381,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -594,15 +633,100 @@ function renderForms() {
   });
 }
 
+let chartCompletion = null;
+let chartCategories = null;
+
 function renderStats() {
-  const all = [...getTasks('ama'), ...getTasks('kwasi')];
-  const done = all.filter(t => t.done).length;
-  const total = all.length;
-  const pct = total ? Math.round(done / total * 100) : 0;
-  document.getElementById('stat-done').textContent = done;
-  document.getElementById('stat-rate').textContent = pct + '%';
-  document.getElementById('bar-done').style.width = Math.min(100, total ? done / total * 100 : 0) + '%';
-  document.getElementById('bar-rate').style.width = pct + '%';
+  ['ama','kwasi'].forEach(who => {
+    const tasks = getTasks(who);
+    const done = tasks.filter(t => t.done).length;
+    const total = tasks.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const k = who === 'ama' ? 'a' : 'k';
+    document.getElementById('stat-'+k+'-done').textContent = done;
+    document.getElementById('stat-'+k+'-hint').textContent = 'of ' + total + ' done today';
+    document.getElementById('bar-'+k+'-done').style.width = (total ? Math.min(100, done/total*100) : 0) + '%';
+    document.getElementById('stat-'+k+'-rate').textContent = pct + '%';
+    document.getElementById('bar-'+k+'-rate').style.width = pct + '%';
+  });
+  renderCharts();
+}
+
+function renderCharts() {
+  const aTasks = getTasks('ama');
+  const kTasks = getTasks('kwasi');
+  const aDone = aTasks.filter(t => t.done).length;
+  const aTotal = aTasks.length;
+  const kDone = kTasks.filter(t => t.done).length;
+  const kTotal = kTasks.length;
+
+  // Bar chart — completion
+  const cCtx = document.getElementById('chart-completion');
+  if (cCtx) {
+    if (chartCompletion) chartCompletion.destroy();
+    chartCompletion = new Chart(cCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Goals done', 'Goals remaining'],
+        datasets: [
+          {
+            label: 'Ama',
+            data: [aDone, Math.max(0, aTotal - aDone)],
+            backgroundColor: ['#E8547A', '#FDE8EE'],
+            borderRadius: 6, borderSkipped: false
+          },
+          {
+            label: 'Kwasi',
+            data: [kDone, Math.max(0, kTotal - kDone)],
+            backgroundColor: ['#2BAE82', '#E3F7F0'],
+            borderRadius: 6, borderSkipped: false
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
+          y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 }, color: '#888', stepSize: 1 }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // Donut chart — category breakdown across both users
+  const allTasks = [...aTasks, ...kTasks];
+  const catMap = {};
+  allTasks.forEach(t => { catMap[t.cat] = (catMap[t.cat] || 0) + 1; });
+  const catLabels = Object.keys(catMap);
+  const catData = catLabels.map(c => catMap[c]);
+  const catColors = { health: '#2BAE82', work: '#7C6FE0', personal: '#E8547A', social: '#F0A030' };
+  const bgColors = catLabels.map(c => catColors[c] || '#ccc');
+
+  // Update legend
+  const legEl = document.getElementById('cat-legend');
+  if (legEl) {
+    legEl.innerHTML = catLabels.map((c,i) =>
+      `<span class="leg"><span class="leg-sq" style="background:${bgColors[i]}"></span>${c} ${catData[i]}</span>`
+    ).join('');
+  }
+
+  const dCtx = document.getElementById('chart-categories');
+  if (dCtx) {
+    if (chartCategories) chartCategories.destroy();
+    chartCategories = new Chart(dCtx, {
+      type: 'doughnut',
+      data: {
+        labels: catLabels,
+        datasets: [{ data: catData, backgroundColor: bgColors, borderWidth: 0, hoverOffset: 4 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
 }
 
 function renderKudos() {
