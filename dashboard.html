@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ama & Kwasi — Accountability</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --pink: #E8547A;
+    --pink-light: #FDE8EE;
+    --pink-mid: #F4B8C8;
+    --green: #2BAE82;
+    --green-light: #E3F7F0;
+    --green-mid: #96DCC4;
+    --purple: #7C6FE0;
+    --purple-light: #EDEAFD;
+    --amber: #F0A030;
+    --amber-light: #FEF3E2;
+    --bg: #FAF9F7;
+    --surface: #FFFFFF;
+    --border: rgba(0,0,0,0.07);
+    --text: #1A1A1A;
+    --muted: #888;
+    --subtle: #C8C8C8;
+    --radius: 18px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 20px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── LAYOUT ── */
+  .shell { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    flex-shrink: 0;
+  }
+  .main { flex: 1; padding: 32px 28px; overflow-y: auto; max-width: 900px; }
+
+  /* ── SIDEBAR ── */
+  .brand {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .brand-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .brand-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--pink); display: inline-block; margin-right: 4px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .nav-section { padding: 20px 12px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--subtle); font-weight: 500; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 24px; cursor: pointer; border-radius: 0;
+    font-size: 13px; color: var(--muted); font-weight: 400;
+    transition: all .15s; position: relative;
+  }
+  .nav-item:hover { color: var(--text); background: var(--bg); }
+  .nav-item.active {
+    color: var(--pink); font-weight: 500;
+    background: var(--pink-light);
+  }
+  .nav-item.active::before {
+    content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+    width: 3px; background: var(--pink); border-radius: 0 3px 3px 0;
+  }
+  .nav-icon { width: 16px; height: 16px; opacity: .7; flex-shrink: 0; }
+  .nav-item.active .nav-icon { opacity: 1; }
+
+  .sidebar-avatars { margin-top: auto; padding: 20px 24px; border-top: 1px solid var(--border); }
+  .sidebar-avatar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .av-sm { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .av-a { background: var(--pink-light); color: var(--pink); }
+  .av-k { background: var(--green-light); color: var(--green); }
+  .av-name { font-size: 12px; font-weight: 500; color: var(--text); }
+  .av-streak { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
+  .page-date { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* ── STAT CARDS ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 16px;
+    transition: transform .15s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .stat-bar { height: 3px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .stat-bar-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+  /* ── CHARTS GRID ── */
+  .charts-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .chart-card-title {
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--text); margin-bottom: 4px; letter-spacing: -0.2px;
+  }
+  .chart-legend { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .leg-sq { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .chart-wrap { position: relative; }
+
+  /* ── STREAK SECTION ── */
+  .streak-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .streak-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .streak-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .av-lg { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+  .streak-info .name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .streak-info .sub { font-size: 11px; color: var(--muted); }
+  .streak-big { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; margin-left: auto; line-height: 1; }
+  .dots-grid { display: flex; gap: 5px; flex-wrap: wrap; }
+  .day-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 600; cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    user-select: none;
+  }
+  .day-dot:hover { transform: scale(1.2); }
+  .day-dot.off { background: var(--bg); color: var(--subtle); border: 1px solid var(--border); }
+  .day-dot.on-a { background: var(--pink); color: white; }
+  .day-dot.on-k { background: var(--green); color: white; }
+  .streak-note { font-size: 10px; color: var(--subtle); margin-top: 10px; }
+
+  /* ── TASKS VIEW ── */
+  .tasks-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .task-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .task-panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .task-panel-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .task-progress { margin-left: auto; font-size: 12px; font-weight: 600; }
+  .task-prog-bar { height: 3px; background: var(--border); border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+  .task-prog-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
+  .task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; min-height: 40px; }
+  .task-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    background: var(--bg); cursor: pointer;
+    transition: background .15s, transform .1s;
+    border: 1px solid transparent;
+  }
+  .task-item:hover { transform: translateX(2px); border-color: var(--border); }
+  .task-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1.5px solid var(--subtle); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; transition: all .2s;
+  }
+  .task-check.done-a { background: var(--pink); border-color: var(--pink); }
+  .task-check.done-k { background: var(--green); border-color: var(--green); }
+  .task-check svg { display: none; }
+  .task-check.done-a svg, .task-check.done-k svg { display: block; }
+  .task-text { font-size: 13px; flex: 1; transition: color .2s; }
+  .task-text.done { text-decoration: line-through; color: var(--subtle); }
+  .cat-pill {
+    font-size: 10px; padding: 2px 7px; border-radius: 20px;
+    font-weight: 500; flex-shrink: 0;
+  }
+  .cat-health { background: var(--green-light); color: var(--green); }
+  .cat-work { background: var(--purple-light); color: var(--purple); }
+  .cat-personal { background: var(--pink-light); color: var(--pink); }
+  .cat-social { background: var(--amber-light); color: var(--amber); }
+  .task-delete {
+    width: 18px; height: 18px; border-radius: 50%; background: transparent;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .15s; flex-shrink: 0; color: var(--muted);
+    font-size: 14px; line-height: 1;
+  }
+  .task-item:hover .task-delete { opacity: 1; }
+
+  .add-task-form { display: flex; flex-direction: column; gap: 8px; }
+  .add-task-inputs { display: flex; gap: 6px; }
+  .add-task-inputs input {
+    flex: 1; padding: 9px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--bg);
+    font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text);
+    outline: none; transition: border-color .15s;
+  }
+  .add-task-inputs input:focus { border-color: var(--pink); }
+  .add-task-inputs select {
+    padding: 9px 10px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--bg);
+    font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text);
+    outline: none; cursor: pointer;
+  }
+  .btn-add-a, .btn-add-k {
+    padding: 9px 16px; border-radius: var(--radius-sm); border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: opacity .15s, transform .1s; white-space: nowrap;
+  }
+  .btn-add-a { background: var(--pink); color: white; }
+  .btn-add-k { background: var(--green); color: white; }
+  .btn-add-a:hover, .btn-add-k:hover { opacity: .85; }
+  .btn-add-a:active, .btn-add-k:active { transform: scale(.97); }
+
+  /* ── KUDOS VIEW ── */
+  .kudos-layout { display: grid; grid-template-columns: 1fr 360px; gap: 14px; }
+  .kudos-feed {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .kudos-feed-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+  .kudos-messages { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .kudos-msg {
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    animation: fadeSlide .3s ease;
+  }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  .kudos-msg.from-a { background: var(--pink-light); border-left: 3px solid var(--pink); }
+  .kudos-msg.from-k { background: var(--green-light); border-left: 3px solid var(--green); }
+  .kudos-msg-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .kudos-msg-meta { font-size: 10px; color: var(--muted); margin-top: 5px; }
+  .kudos-compose {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .kudos-compose-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .kudos-compose textarea {
+    width: 100%; padding: 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--bg);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+    outline: none; resize: none; line-height: 1.5; min-height: 90px;
+    transition: border-color .15s;
+  }
+  .kudos-compose textarea:focus { border-color: var(--pink); }
+  .kudos-btns { display: flex; gap: 8px; }
+  .kudos-btns button {
+    flex: 1; padding: 10px; border-radius: var(--radius-sm);
+    border: none; font-family: 'DM Sans', sans-serif; font-size: 12px;
+    font-weight: 500; cursor: pointer; transition: opacity .15s, transform .1s;
+  }
+  .kudos-btns button:hover { opacity: .85; }
+  .kudos-btns button:active { transform: scale(.97); }
+  .btn-k-a { background: var(--pink); color: white; }
+  .btn-k-k { background: var(--green); color: white; }
+  .kudos-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 24px; }
+
+  /* ── EMPTY STATES ── */
+  .empty-tasks { font-size: 12px; color: var(--subtle); text-align: center; padding: 16px 0; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 12px 18px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; color: white;
+    opacity: 0; transform: translateY(10px);
+    transition: all .25s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .main { padding: 16px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .charts-2col, .streak-row, .tasks-2col, .kudos-layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name"><span class="brand-dot"></span>Ama &amp; Kwasi</div>
+      <div class="brand-sub">accountability partners</div>
+    </div>
+
+    <div class="nav-section">Menu</div>
+    <div class="nav-item active" onclick="navigate('overview')" id="nav-overview">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Overview
+    </div>
+    <div class="nav-item" onclick="navigate('tasks')" id="nav-tasks">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+      Micro Goals
+    </div>
+    <div class="nav-item" onclick="navigate('kudos')" id="nav-kudos">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13.5S2 10 2 5.5a3 3 0 016 0 3 3 0 016 0c0 4.5-6 8-6 8z"/></svg>
+      Send Love
+    </div>
+
+    <div class="sidebar-avatars">
+      <div class="sidebar-avatar-row">
+        <div class="av-sm av-a">A</div>
+        <div class="av-name">Ama</div>
+        <div class="av-streak" id="sb-ama-streak">6 🔥</div>
+      </div>
+      <div class="sidebar-avatar-row">
+        <div class="av-sm av-k">K</div>
+        <div class="av-name">Kwasi</div>
+        <div class="av-streak" id="sb-kwasi-streak">4 🔥</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW PAGE -->
+    <div id="page-overview">
+      <div class="page-header">
+        <div class="page-title">Overview</div>
+        <div class="page-date" id="today-label"></div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Ama's streak</div>
+          <div class="stat-value" style="color:var(--pink)" id="stat-ama-streak">6</div>
+          <div class="stat-sub">days in a row</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="bar-ama-streak" style="background:var(--pink);width:67%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Kwasi's streak</div>
+          <div class="stat-value" style="color:var(--green)" id="stat-kwasi-streak">4</div>
+          <div class="stat-sub">days in a row</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="bar-kwasi-streak" style="background:var(--green);width:44%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Done today</div>
+          <div class="stat-value" style="color:var(--purple)" id="stat-done">0</div>
+          <div class="stat-sub">combined goals</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="bar-done" style="background:var(--purple);width:0%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completion</div>
+          <div class="stat-value" style="color:var(--amber)" id="stat-rate">0%</div>
+          <div class="stat-sub">today's rate</div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="bar-rate" style="background:var(--amber);width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="charts-2col">
+        <div class="chart-card">
+          <div class="chart-card-title">Weekly goals completed</div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-sq" style="background:var(--pink)"></span>Ama</span>
+            <span class="leg"><span class="leg-sq" style="background:var(--green)"></span>Kwasi</span>
+          </div>
+          <div class="chart-wrap" style="height:170px"><canvas id="chart-weekly" role="img" aria-label="Weekly goals bar chart">Weekly goals comparison.</canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Goal category split</div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-sq" style="background:var(--green)"></span>Health 32%</span>
+            <span class="leg"><span class="leg-sq" style="background:var(--purple)"></span>Work 28%</span>
+            <span class="leg"><span class="leg-sq" style="background:var(--pink)"></span>Personal 22%</span>
+            <span class="leg"><span class="leg-sq" style="background:var(--amber)"></span>Social 18%</span>
+          </div>
+          <div class="chart-wrap" style="height:170px"><canvas id="chart-donut" role="img" aria-label="Goal category donut chart">Category split.</canvas></div>
+        </div>
+      </div>
+
+      <div class="charts-2col">
+        <div class="chart-card">
+          <div class="chart-card-title">30-day completion trend</div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-sq" style="background:var(--pink)"></span>Ama</span>
+            <span class="leg"><span class="leg-sq" style="background:var(--green);border:1px dashed var(--green)"></span>Kwasi</span>
+          </div>
+          <div class="chart-wrap" style="height:150px"><canvas id="chart-trend" role="img" aria-label="30-day trend line chart">Trend over 30 days.</canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">Monthly goals set vs done</div>
+          <div class="chart-legend">
+            <span class="leg"><span class="leg-sq" style="background:#B8AFEC"></span>Set</span>
+            <span class="leg"><span class="leg-sq" style="background:var(--purple)"></span>Done</span>
+          </div>
+          <div class="chart-wrap" style="height:150px"><canvas id="chart-monthly" role="img" aria-label="Monthly goals bar chart">Monthly set vs done.</canvas></div>
+        </div>
+      </div>
+
+      <div class="streak-row">
+        <div class="streak-card">
+          <div class="streak-header">
+            <div class="av-lg av-a">A</div>
+            <div class="streak-info">
+              <div class="name">Ama</div>
+              <div class="sub" id="ama-streak-sub">6 day streak</div>
+            </div>
+            <div class="streak-big" style="color:var(--pink)" id="ama-streak-big">6</div>
+          </div>
+          <div class="dots-grid" id="dots-ama"></div>
+          <div class="streak-note">Last 15 days — tap to toggle</div>
+        </div>
+        <div class="streak-card">
+          <div class="streak-header">
+            <div class="av-lg av-k">K</div>
+            <div class="streak-info">
+              <div class="name">Kwasi</div>
+              <div class="sub" id="kwasi-streak-sub">4 day streak</div>
+            </div>
+            <div class="streak-big" style="color:var(--green)" id="kwasi-streak-big">4</div>
+          </div>
+          <div class="dots-grid" id="dots-kwasi"></div>
+          <div class="streak-note">Last 15 days — tap to toggle</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS PAGE -->
+    <div id="page-tasks" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Micro Goals</div>
+        <div class="page-date">Check off your goals as you crush them</div>
+      </div>
+      <div class="tasks-2col">
+        <div class="task-panel">
+          <div class="task-panel-header">
+            <div class="av-lg av-a">A</div>
+            <div class="task-panel-name">Ama</div>
+            <div class="task-progress" style="color:var(--pink)" id="ama-task-prog">0/0</div>
+          </div>
+          <div class="task-prog-bar"><div class="task-prog-fill" id="ama-task-bar" style="background:var(--pink);width:0%"></div></div>
+          <div class="task-list" id="ama-task-list"></div>
+          <div class="add-task-form">
+            <div class="add-task-inputs">
+              <input id="ama-task-input" placeholder="Add a micro goal..." />
+              <select id="ama-task-cat">
+                <option value="health">Health</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="social">Social</option>
+              </select>
+            </div>
+            <button class="btn-add-a" onclick="addTask('a')">Add goal</button>
+          </div>
+        </div>
+        <div class="task-panel">
+          <div class="task-panel-header">
+            <div class="av-lg av-k">K</div>
+            <div class="task-panel-name">Kwasi</div>
+            <div class="task-progress" style="color:var(--green)" id="kwasi-task-prog">0/0</div>
+          </div>
+          <div class="task-prog-bar"><div class="task-prog-fill" id="kwasi-task-bar" style="background:var(--green);width:0%"></div></div>
+          <div class="task-list" id="kwasi-task-list"></div>
+          <div class="add-task-form">
+            <div class="add-task-inputs">
+              <input id="kwasi-task-input" placeholder="Add a micro goal..." />
+              <select id="kwasi-task-cat">
+                <option value="health">Health</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="social">Social</option>
+              </select>
+            </div>
+            <button class="btn-add-k" onclick="addTask('k')">Add goal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KUDOS PAGE -->
+    <div id="page-kudos" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Send Love</div>
+        <div class="page-date">Hype each other up</div>
+      </div>
+      <div class="kudos-layout">
+        <div class="kudos-feed">
+          <div class="kudos-feed-title">Messages</div>
+          <div class="kudos-messages" id="kudos-messages">
+            <div class="kudos-empty">No messages yet — send the first one!</div>
+          </div>
+        </div>
+        <div class="kudos-compose">
+          <div class="kudos-compose-title">Write a message</div>
+          <textarea id="kudos-text" placeholder="You're doing amazing, keep it up!"></textarea>
+          <div class="kudos-btns">
+            <button class="btn-k-a" onclick="sendKudos('Ama')">Send as Ama</button>
+            <button class="btn-k-k" onclick="sendKudos('Kwasi')">Send as Kwasi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────
+const defaultState = {
+  tasks: {
+    a: [
+      {text:'Drink 2L water', cat:'health', done:false},
+      {text:'Morning stretch 10 min', cat:'health', done:false},
+      {text:'Read 20 pages', cat:'personal', done:false},
+      {text:'Journal 5 min', cat:'personal', done:false},
+      {text:'No phone after 10pm', cat:'personal', done:false}
+    ],
+    k: [
+      {text:'Workout 30 min', cat:'health', done:false},
+      {text:'Meditate 10 min', cat:'personal', done:false},
+      {text:'Review weekly goals', cat:'work', done:false},
+      {text:'Sleep by 11pm', cat:'health', done:false},
+      {text:'Prep meals', cat:'health', done:false}
+    ]
+  },
+  dots: {
+    a: [1,1,1,0,1,1,1,1,1,0,1,1,0,1,1],
+    k: [1,0,1,1,0,1,1,0,1,1,1,0,1,1,1]
+  },
+  kudos: []
+};
+
+let S = JSON.parse(JSON.stringify(defaultState));
+
+function load() {
+  try {
+    const saved = localStorage.getItem('ak_app_v2');
+    if (saved) S = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function save() {
+  try { localStorage.setItem('ak_app_v2', JSON.stringify(S)); } catch(e) {}
+}
+
+// ── UTILS ────────────────────────────────────────────────────
+const DAY_LBL = ['M','T','W','T','F','S','S','M','T','W','T','F','S','S','T'];
+
+function calcStreak(dots) {
+  let n = 0;
+  for (let i = dots.length - 1; i >= 0; i--) { if (dots[i]) n++; else break; }
+  return n;
+}
+
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || '#1A1A1A';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+function navigate(page) {
+  ['overview','tasks','kudos'].forEach(p => {
+    document.getElementById('page-' + p).style.display = p === page ? 'block' : 'none';
+    const nav = document.getElementById('nav-' + p);
+    nav.classList.toggle('active', p === page);
+  });
+}
+
+// ── STREAKS ──────────────────────────────────────────────────
+function renderDots() {
+  ['a','k'].forEach(who => {
+    const container = document.getElementById('dots-' + who);
+    container.innerHTML = '';
+    S.dots[who].forEach((on, i) => {
+      const d = document.createElement('div');
+      d.className = 'day-dot ' + (on ? 'on-' + who : 'off');
+      d.textContent = DAY_LBL[i];
+      d.title = on ? 'Done!' : 'Missed';
+      d.onclick = () => {
+        S.dots[who][i] = on ? 0 : 1;
+        save(); renderDots(); updateStats();
+      };
+      container.appendChild(d);
+    });
+    updateStreakDisplay(who);
+  });
+}
+
+function updateStreakDisplay(who) {
+  const streak = calcStreak(S.dots[who]);
+  const name = who === 'a' ? 'ama' : 'kwasi';
+  document.getElementById(name + '-streak-big').textContent = streak;
+  document.getElementById(name + '-streak-sub').textContent = streak + ' day streak';
+  document.getElementById('stat-' + name + '-streak').textContent = streak;
+  document.getElementById('bar-' + name + '-streak').style.width = Math.round(Math.min(100, streak / 10 * 100)) + '%';
+  document.getElementById('sb-' + name + '-streak').textContent = streak + ' 🔥';
+}
+
+// ── TASKS ────────────────────────────────────────────────────
+function renderTasks() {
+  ['a','k'].forEach(who => {
+    const listId = who === 'a' ? 'ama-task-list' : 'kwasi-task-list';
+    const el = document.getElementById(listId);
+    const tasks = S.tasks[who];
+
+    if (!tasks.length) {
+      el.innerHTML = '<div class="empty-tasks">No goals yet — add one above!</div>';
+    } else {
+      el.innerHTML = tasks.map((t, i) => `
+        <div class="task-item" onclick="toggleTask('${who}', ${i})">
+          <div class="task-check ${t.done ? 'done-' + who : ''}">
+            <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+              <path d="M1 3L3.5 5.5L8 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="task-text ${t.done ? 'done' : ''}">${t.text}</span>
+          <span class="cat-pill cat-${t.cat}">${t.cat}</span>
+          <button class="task-delete" onclick="deleteTask(event,'${who}',${i})">×</button>
+        </div>`).join('');
+    }
+
+    const done = tasks.filter(t => t.done).length;
+    const total = tasks.length;
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+    const progId = who === 'a' ? 'ama-task-prog' : 'kwasi-task-prog';
+    const barId = who === 'a' ? 'ama-task-bar' : 'kwasi-task-bar';
+    document.getElementById(progId).textContent = done + '/' + total;
+    document.getElementById(barId).style.width = pct + '%';
+  });
+  updateStats();
+}
+
+function toggleTask(who, i) {
+  S.tasks[who][i].done = !S.tasks[who][i].done;
+  save(); renderTasks();
+  if (S.tasks[who][i].done) showToast('Goal crushed!', who === 'a' ? '#E8547A' : '#2BAE82');
+}
+
+function deleteTask(e, who, i) {
+  e.stopPropagation();
+  S.tasks[who].splice(i, 1);
+  save(); renderTasks();
+}
+
+function addTask(who) {
+  const inputId = who === 'a' ? 'ama-task-input' : 'kwasi-task-input';
+  const catId = who === 'a' ? 'ama-task-cat' : 'kwasi-task-cat';
+  const text = document.getElementById(inputId).value.trim();
+  const cat = document.getElementById(catId).value;
+  if (!text) return;
+  S.tasks[who].push({ text, cat, done: false });
+  document.getElementById(inputId).value = '';
+  save(); renderTasks();
+  showToast('Goal added!', who === 'a' ? '#E8547A' : '#2BAE82');
+}
+
+document.getElementById('ama-task-input').addEventListener('keydown', e => { if (e.key === 'Enter') addTask('a'); });
+document.getElementById('kwasi-task-input').addEventListener('keydown', e => { if (e.key === 'Enter') addTask('k'); });
+
+// ── STATS ────────────────────────────────────────────────────
+function updateStats() {
+  const all = [...S.tasks.a, ...S.tasks.k];
+  const done = all.filter(t => t.done).length;
+  const total = all.length;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-rate').textContent = pct + '%';
+  document.getElementById('bar-done').style.width = Math.round(Math.min(100, done / Math.max(1, total) * 100)) + '%';
+  document.getElementById('bar-rate').style.width = pct + '%';
+}
+
+// ── KUDOS ────────────────────────────────────────────────────
+function sendKudos(from) {
+  const text = document.getElementById('kudos-text').value.trim();
+  if (!text) return;
+  S.kudos.unshift({ from, text, time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) });
+  document.getElementById('kudos-text').value = '';
+  save(); renderKudos();
+  showToast('Message sent! 💌', from === 'Ama' ? '#E8547A' : '#2BAE82');
+}
+
+function renderKudos() {
+  const el = document.getElementById('kudos-messages');
+  if (!S.kudos.length) {
+    el.innerHTML = '<div class="kudos-empty">No messages yet — send the first one!</div>';
+    return;
+  }
+  el.innerHTML = S.kudos.slice(0, 20).map(k => `
+    <div class="kudos-msg from-${k.from === 'Ama' ? 'a' : 'k'}">
+      <div class="kudos-msg-text">${k.text}</div>
+      <div class="kudos-msg-meta">from ${k.from} · ${k.time}</div>
+    </div>`).join('');
+}
+
+document.getElementById('kudos-text').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); sendKudos('Ama'); }
+});
+
+// ── CHARTS ───────────────────────────────────────────────────
+function buildCharts() {
+  const tick = { font: { size: 10, family: 'DM Sans' }, color: '#888' };
+  const gridColor = 'rgba(0,0,0,0.04)';
+
+  new Chart(document.getElementById('chart-weekly'), {
+    type: 'bar',
+    data: {
+      labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7'],
+      datasets: [
+        { label: 'Ama',   data: [5,7,4,8,6,9,7], backgroundColor: '#E8547A', borderRadius: 4 },
+        { label: 'Kwasi', data: [4,5,6,5,7,6,8], backgroundColor: '#2BAE82', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: tick },
+        y: { grid: { color: gridColor }, ticks: { ...tick, stepSize: 2 }, beginAtZero: true }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chart-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Health','Work','Personal','Social'],
+      datasets: [{ data: [32,28,22,18], backgroundColor: ['#2BAE82','#7C6FE0','#E8547A','#F0A030'], borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  const seed = n => ((n * 9301 + 49297) % 233280) / 233280;
+  const days = Array.from({ length: 30 }, (_, i) => i + 1);
+  new Chart(document.getElementById('chart-trend'), {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        { label: 'Ama',   data: days.map(i => Math.min(100, Math.round(50 + i * 1.5 + seed(i) * 10 - 5))), borderColor: '#E8547A', tension: .4, pointRadius: 0, borderWidth: 2, backgroundColor: 'transparent' },
+        { label: 'Kwasi', data: days.map(i => Math.min(100, Math.round(45 + i * 1.2 + seed(i+30) * 10 - 5))), borderColor: '#2BAE82', tension: .4, pointRadius: 0, borderDash: [4,4], borderWidth: 2, backgroundColor: 'transparent' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { ...tick, maxTicksLimit: 6 } },
+        y: { grid: { color: gridColor }, ticks: { ...tick, callback: v => v + '%' }, min: 30, max: 100 }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chart-monthly'), {
+    type: 'bar',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr'],
+      datasets: [
+        { label: 'Set',  data: [20,25,22,28], backgroundColor: '#B8AFEC', borderRadius: 4 },
+        { label: 'Done', data: [14,19,18,24], backgroundColor: '#7C6FE0', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: tick },
+        y: { grid: { color: gridColor }, ticks: { ...tick, stepSize: 5 }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+document.getElementById('today-label').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+load();
+renderDots();
+renderTasks();
+renderKudos();
+updateStats();
+buildCharts();
+</script>
+</body>
+</html>
