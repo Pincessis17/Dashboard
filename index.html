@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ama & Kwasi — Accountability</title>
+<title>Ama & Kwasi</title>
 <style>
 :root{
   --pink:#E8547A;--pink-light:#FDE8EE;
@@ -17,155 +17,165 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
 
+/* LOGIN */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:40px;text-align:center;max-width:420px;width:90%}
-.login-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:32px}
-.login-avatars{display:flex;gap:16px;justify-content:center}
-.login-av{flex:1;padding:24px 16px;border-radius:var(--r);border:2px solid var(--border);cursor:pointer;transition:all .2s;background:var(--bg)}
-.login-av:hover{transform:translateY(-3px)}
-.login-av.ama:hover{border-color:var(--pink);background:var(--pink-light)}
-.login-av.kwasi:hover{border-color:var(--green);background:var(--green-light)}
-.login-av .circle{width:64px;height:64px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
-.login-av.ama .circle{background:var(--pink-light);color:var(--pink)}
-.login-av.kwasi .circle{background:var(--green-light);color:var(--green)}
-.login-av .av-name{font-size:16px;font-weight:700;margin-bottom:4px}
-.login-av .av-role{font-size:12px;color:var(--muted)}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 40px;text-align:center;max-width:440px;width:90%}
+.login-title{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:36px}
+.login-avatars{display:flex;gap:16px}
+.login-av{flex:1;padding:28px 16px;border-radius:var(--r);border:2px solid var(--border);cursor:pointer;transition:all .2s;background:var(--bg)}
+.login-av:hover{transform:translateY(-4px)}
+.login-av.pick-ama:hover{border-color:var(--pink);background:var(--pink-light)}
+.login-av.pick-kwasi:hover{border-color:var(--green);background:var(--green-light)}
+.av-circle{width:68px;height:68px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800}
+.pick-ama .av-circle{background:var(--pink-light);color:var(--pink)}
+.pick-kwasi .av-circle{background:var(--green-light);color:var(--green)}
+.av-name{font-size:17px;font-weight:700;margin-bottom:4px}
+.av-role{font-size:12px;color:var(--muted)}
 
-#app-shell{display:none}
+/* APP SHELL */
+#app{display:none;min-height:100vh;display:none}
 .shell{display:flex;min-height:100vh}
-.sidebar{width:215px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:sticky;top:0;height:100vh;flex-shrink:0}
-.main{flex:1;padding:28px 24px;overflow-y:auto}
 
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:sticky;top:0;height:100vh;flex-shrink:0}
 .brand{padding:0 20px 20px;border-bottom:1px solid var(--border)}
-.brand-name{font-size:16px;font-weight:800;letter-spacing:-.3px}
-.brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.bdot{width:8px;height:8px;border-radius:50%;background:var(--pink);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.who-badge{margin:14px 20px 0;padding:8px 12px;border-radius:var(--r-sm);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
-.who-badge.ama{background:var(--pink-light);color:var(--pink)}
-.who-badge.kwasi{background:var(--green-light);color:var(--green)}
-.who-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
-.who-badge.ama .who-av{background:var(--pink);color:#fff}
-.who-badge.kwasi .who-av{background:var(--green);color:#fff}
-.nav-sec{padding:18px 12px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--subtle)}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;position:relative;border:none;background:none;width:100%;text-align:left}
-.nav-item:hover{color:var(--text);background:var(--bg)}
-.nav-item.active-ama{color:var(--pink);font-weight:500;background:var(--pink-light)}
-.nav-item.active-kwasi{color:var(--green);font-weight:500;background:var(--green-light)}
-.nav-item.active-ama::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--pink);border-radius:0 3px 3px 0}
-.nav-item.active-kwasi::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--green);border-radius:0 3px 3px 0}
-.nav-ico{width:15px;height:15px;flex-shrink:0;opacity:.6}
-.sidebar-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
-.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.brand-name{font-size:16px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:6px}
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--pink);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.who-pill{margin:14px 20px 0;padding:8px 12px;border-radius:var(--r-sm);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+.who-pill.ama{background:var(--pink-light);color:var(--pink)}
+.who-pill.kwasi{background:var(--green-light);color:var(--green)}
+.who-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.who-pill.ama .who-dot{background:var(--pink);color:#fff}
+.who-pill.kwasi .who-dot{background:var(--green);color:#fff}
+.nav-section-lbl{padding:18px 12px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--subtle)}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 20px;border:none;background:none;width:100%;text-align:left;font-family:inherit;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;position:relative}
+.nav-btn:hover{color:var(--text);background:var(--bg)}
+.nav-btn.on-ama{color:var(--pink);font-weight:500;background:var(--pink-light)}
+.nav-btn.on-kwasi{color:var(--green);font-weight:500;background:var(--green-light)}
+.nav-btn.on-ama::before,.nav-btn.on-kwasi::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0}
+.nav-btn.on-ama::before{background:var(--pink)}
+.nav-btn.on-kwasi::before{background:var(--green)}
+.nav-ico{width:15px;height:15px;opacity:.6;flex-shrink:0}
+.nav-btn.on-ama .nav-ico,.nav-btn.on-kwasi .nav-ico{opacity:1}
+.sidebar-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+.partner-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .av-xs{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .av-a{background:var(--pink-light);color:var(--pink)}
 .av-k{background:var(--green-light);color:var(--green)}
-.sb-name{font-size:12px;font-weight:500}
-.sb-streak{font-size:11px;color:var(--muted);margin-left:auto}
+.partner-name{font-size:12px;font-weight:500}
+.partner-streak{font-size:11px;color:var(--muted);margin-left:auto}
 .online-dot{width:7px;height:7px;border-radius:50%;background:var(--subtle);display:inline-block;margin-left:3px;vertical-align:middle;transition:background .3s}
 .online-dot.on{background:var(--green)}
-.switch-btn{width:100%;margin-top:10px;padding:7px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:11px;color:var(--muted);cursor:pointer}
-.switch-btn:hover{background:var(--border)}
+.switch-btn{width:100%;margin-top:10px;padding:8px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:11px;color:var(--muted);cursor:pointer;transition:background .15s}
+.switch-btn:hover{background:#eee}
 
-.page-header{margin-bottom:22px}
+/* MAIN */
+.main{flex:1;padding:28px 28px;overflow-y:auto}
+.page-hdr{margin-bottom:22px}
 .page-title{font-size:24px;font-weight:800;letter-spacing:-.4px}
 .page-sub{font-size:12px;color:var(--muted);margin-top:3px}
-.av-lg{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
 
-.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:transform .15s}
 .stat-card:hover{transform:translateY(-2px)}
 .stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
 .stat-val{font-size:26px;font-weight:800;line-height:1}
-.stat-sub2{font-size:11px;color:var(--muted);margin-top:3px}
-.sbar{height:3px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
-.sbar-fill{height:100%;border-radius:3px;transition:width .5s}
+.stat-hint{font-size:11px;color:var(--muted);margin-top:3px}
+.mini-bar{height:3px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:3px;transition:width .5s}
 
-.streak-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.streak-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
-.streak-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.s-name{font-size:14px;font-weight:700}
-.s-sub{font-size:11px;color:var(--muted)}
-.s-big{font-size:30px;font-weight:800;margin-left:auto;line-height:1}
-.streak-history{display:flex;gap:3px;margin-top:4px}
-.sh-bar{height:6px;flex:1;border-radius:3px;transition:background .2s}
-.sh-on-a{background:var(--pink)}
-.sh-on-k{background:var(--green)}
-.sh-off{background:var(--border)}
+/* STREAK CARDS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.card-title{font-size:13px;font-weight:700;margin-bottom:12px;letter-spacing:-.1px}
+.streak-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.av-lg{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.streak-name{font-size:14px;font-weight:700}
+.streak-sub{font-size:11px;color:var(--muted)}
+.streak-num{font-size:32px;font-weight:800;margin-left:auto;line-height:1}
+.streak-bars{display:flex;gap:3px;margin-bottom:6px}
+.s-bar{height:7px;flex:1;border-radius:3px}
+.s-bar.on-a{background:var(--pink)}
+.s-bar.on-k{background:var(--green)}
+.s-bar.off{background:var(--border)}
+.streak-hint{font-size:10px;color:var(--subtle)}
 
-.tasks-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* TASK PANELS */
 .task-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
 .tp-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .tp-name{font-size:14px;font-weight:700}
-.tp-prog{font-size:12px;font-weight:600;margin-left:auto}
-.tp-bar{height:3px;background:var(--border);border-radius:3px;margin-bottom:12px;overflow:hidden}
+.tp-count{font-size:12px;font-weight:600;margin-left:auto}
+.tp-bar{height:3px;background:var(--border);border-radius:3px;margin-bottom:14px;overflow:hidden}
 .tp-fill{height:100%;border-radius:3px;transition:width .4s}
-.task-list{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;min-height:36px}
-.t-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--r-sm);background:var(--bg);border:1px solid transparent;transition:border-color .15s}
-.t-item.mine{cursor:pointer}
-.t-item.mine:hover{border-color:var(--border)}
-.t-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
-.t-check.ca{background:var(--pink);border-color:var(--pink)}
-.t-check.ck{background:var(--green);border-color:var(--green)}
+.task-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;min-height:40px}
+.t-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--r-sm);background:var(--bg);border:1px solid transparent;transition:border-color .15s}
+.t-item.editable{cursor:pointer}
+.t-item.editable:hover{border-color:var(--border)}
+.t-check{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.t-check.done-a{background:var(--pink);border-color:var(--pink)}
+.t-check.done-k{background:var(--green);border-color:var(--green)}
 .t-check svg{display:none}
-.t-check.ca svg,.t-check.ck svg{display:block}
-.t-txt{font-size:13px;flex:1}
-.t-txt.done{text-decoration:line-through;color:var(--subtle)}
-.cpill{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;flex-shrink:0}
-.c-health{background:var(--green-light);color:var(--green)}
-.c-work{background:var(--purple-light);color:var(--purple)}
-.c-personal{background:var(--pink-light);color:var(--pink)}
-.c-social{background:var(--amber-light);color:var(--amber)}
-.t-del{background:none;border:none;cursor:pointer;color:var(--subtle);font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;flex-shrink:0}
-.t-item.mine:hover .t-del{opacity:1}
-.add-form{display:flex;flex-direction:column;gap:7px}
-.add-inputs{display:flex;gap:6px}
-.add-inputs input,.add-inputs select{padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:12px;color:var(--text);outline:none}
-.add-inputs input{flex:1}
-.btn-a{padding:8px 14px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;background:var(--pink);color:#fff}
-.btn-k{padding:8px 14px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;background:var(--green);color:#fff}
-.btn-a:hover,.btn-k:hover{opacity:.85}
-.locked-note{font-size:11px;color:var(--subtle);font-style:italic;padding:6px 0}
-.empty-msg{font-size:12px;color:var(--subtle);text-align:center;padding:14px}
+.t-check.done-a svg,.t-check.done-k svg{display:block}
+.t-text{font-size:13px;flex:1;line-height:1.4}
+.t-text.done{text-decoration:line-through;color:var(--subtle)}
+.cat-pill{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;flex-shrink:0}
+.cat-health{background:var(--green-light);color:var(--green)}
+.cat-work{background:var(--purple-light);color:var(--purple)}
+.cat-personal{background:var(--pink-light);color:var(--pink)}
+.cat-social{background:var(--amber-light);color:var(--amber)}
+.t-del{background:none;border:none;cursor:pointer;color:var(--subtle);font-size:18px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.t-item.editable:hover .t-del{opacity:1}
+.readonly-note{font-size:11px;color:var(--subtle);font-style:italic;padding:4px 0}
+.add-row{display:flex;gap:6px;margin-top:4px}
+.add-row input{flex:1;padding:9px 11px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+.add-row input:focus{border-color:var(--pink)}
+.add-row select{padding:9px 10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:12px;color:var(--text);outline:none;cursor:pointer}
+.add-row button{padding:9px 16px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.add-row button:hover{opacity:.85}
+.btn-ama{background:var(--pink);color:#fff}
+.btn-kwasi{background:var(--green);color:#fff}
+.empty-note{font-size:12px;color:var(--subtle);text-align:center;padding:16px 0}
 
-.kudos-wrap{display:grid;grid-template-columns:1fr 320px;gap:12px}
+/* KUDOS */
+.kudos-wrap{display:grid;grid-template-columns:1fr 320px;gap:14px}
 .kudos-feed{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
-.kf-title{font-size:14px;font-weight:700;margin-bottom:12px}
-.kmsgs{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;max-height:400px;overflow-y:auto}
-.kmsg{padding:11px 13px;border-radius:var(--r-sm);animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.kmsg.fa{background:var(--pink-light);border-left:3px solid var(--pink)}
-.kmsg.fk{background:var(--green-light);border-left:3px solid var(--green)}
-.kmsg-txt{font-size:13px;line-height:1.5}
-.kmsg-meta{font-size:10px;color:var(--muted);margin-top:4px}
+.kudos-msgs{display:flex;flex-direction:column;gap:8px;max-height:360px;overflow-y:auto;margin-bottom:10px}
+.k-msg{padding:11px 14px;border-radius:var(--r-sm);animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.k-msg.from-ama{background:var(--pink-light);border-left:3px solid var(--pink)}
+.k-msg.from-kwasi{background:var(--green-light);border-left:3px solid var(--green)}
+.k-msg-text{font-size:13px;line-height:1.5}
+.k-msg-meta{font-size:10px;color:var(--muted);margin-top:4px}
 .kudos-compose{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px}
-.kc-title{font-size:14px;font-weight:700}
-.kudos-compose textarea{padding:10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;resize:none;min-height:80px;line-height:1.5;width:100%}
-.send-btn{padding:10px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:#fff;transition:opacity .15s}
-.send-btn:hover{opacity:.85}
+.kudos-compose textarea{width:100%;padding:11px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;resize:none;min-height:90px;line-height:1.5;transition:border-color .15s}
+.kudos-compose textarea:focus{border-color:var(--pink)}
+.kudos-send{padding:10px 16px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:#fff;width:100%;transition:opacity .15s}
+.kudos-send:hover{opacity:.85}
 
-.toast{position:fixed;bottom:20px;right:20px;padding:10px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:#fff;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999}
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;padding:11px 18px;border-radius:var(--r-sm);font-size:13px;font-weight:500;color:#fff;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999}
 .toast.show{opacity:1;transform:translateY(0)}
-
-
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-title">Ama &amp; Kwasi</div>
     <div class="login-sub">Who are you today?</div>
     <div class="login-avatars">
-      <div class="login-av ama" onclick="login('ama')">
-        <div class="circle">A</div>
+      <div class="login-av pick-ama" onclick="login('ama')">
+        <div class="av-circle">A</div>
         <div class="av-name">Ama</div>
         <div class="av-role">accountability partner</div>
       </div>
-      <div class="login-av kwasi" onclick="login('kwasi')">
-        <div class="circle">K</div>
+      <div class="login-av pick-kwasi" onclick="login('kwasi')">
+        <div class="av-circle">K</div>
         <div class="av-name">Kwasi</div>
         <div class="av-role">accountability partner</div>
       </div>
@@ -174,97 +184,159 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 </div>
 
 <!-- APP -->
-<div id="app-shell">
+<div id="app">
   <div class="shell">
+
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-name"><span class="bdot"></span>Ama &amp; Kwasi</div>
         <div class="brand-sub">accountability partners</div>
       </div>
-      <div id="who-badge" class="who-badge"></div>
-      <div class="nav-sec">Menu</div>
-      <button class="nav-item" id="nav-overview" onclick="goTo('overview')">
+      <div id="who-pill" class="who-pill"></div>
+      <div class="nav-section-lbl">Menu</div>
+      <button class="nav-btn" id="nav-overview" onclick="goTo('overview')">
         <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
         Overview
       </button>
-      <button class="nav-item" id="nav-tasks" onclick="goTo('tasks')">
+      <button class="nav-btn" id="nav-tasks" onclick="goTo('tasks')">
         <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
         Micro Goals
       </button>
-      <button class="nav-item" id="nav-kudos" onclick="goTo('kudos')">
+      <button class="nav-btn" id="nav-kudos" onclick="goTo('kudos')">
         <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13.5S2 10 2 5.5a3 3 0 016 0 3 3 0 016 0c0 4.5-6 8-6 8z"/></svg>
         Send Love
       </button>
-      <div class="sidebar-bottom">
-        <div class="sb-row"><div class="av-xs av-a">A</div><span class="sb-name">Ama</span><span class="sb-streak" id="sb-ama">— 🔥</span><span class="online-dot" id="dot-ama"></span></div>
-        <div class="sb-row"><div class="av-xs av-k">K</div><span class="sb-name">Kwasi</span><span class="sb-streak" id="sb-kwasi">— 🔥</span><span class="online-dot" id="dot-kwasi"></span></div>
+      <div class="sidebar-foot">
+        <div class="partner-row">
+          <div class="av-xs av-a">A</div>
+          <span class="partner-name">Ama</span>
+          <span class="partner-streak" id="sb-ama">—</span>
+          <span class="online-dot" id="online-ama"></span>
+        </div>
+        <div class="partner-row">
+          <div class="av-xs av-k">K</div>
+          <span class="partner-name">Kwasi</span>
+          <span class="partner-streak" id="sb-kwasi">—</span>
+          <span class="online-dot" id="online-kwasi"></span>
+        </div>
         <button class="switch-btn" onclick="switchUser()">Switch user</button>
       </div>
     </aside>
+
     <main class="main">
-      <!-- OVERVIEW -->
+
+      <!-- OVERVIEW PAGE -->
       <div id="pg-overview" style="display:none">
-        <div class="page-header">
+        <div class="page-hdr">
           <div class="page-title">Overview</div>
           <div class="page-sub" id="today-lbl"></div>
         </div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-lbl">Ama's streak</div><div class="stat-val" style="color:var(--pink)" id="sv-as">—</div><div class="stat-sub2">days in a row</div><div class="sbar"><div class="sbar-fill" id="sfb-as" style="background:var(--pink);width:0%"></div></div></div>
-          <div class="stat-card"><div class="stat-lbl">Kwasi's streak</div><div class="stat-val" style="color:var(--green)" id="sv-ks">—</div><div class="stat-sub2">days in a row</div><div class="sbar"><div class="sbar-fill" id="sfb-ks" style="background:var(--green);width:0%"></div></div></div>
-          <div class="stat-card"><div class="stat-lbl">Done today</div><div class="stat-val" style="color:var(--purple)" id="sv-done">—</div><div class="stat-sub2">combined goals</div><div class="sbar"><div class="sbar-fill" id="sfb-done" style="background:var(--purple);width:0%"></div></div></div>
-          <div class="stat-card"><div class="stat-lbl">Completion</div><div class="stat-val" style="color:var(--amber)" id="sv-rate">—</div><div class="stat-sub2">today's rate</div><div class="sbar"><div class="sbar-fill" id="sfb-rate" style="background:var(--amber);width:0%"></div></div></div>
+          <div class="stat-card">
+            <div class="stat-lbl">Ama's streak</div>
+            <div class="stat-val" style="color:var(--pink)" id="stat-as">—</div>
+            <div class="stat-hint">days in a row</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-as" style="background:var(--pink);width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Kwasi's streak</div>
+            <div class="stat-val" style="color:var(--green)" id="stat-ks">—</div>
+            <div class="stat-hint">days in a row</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-ks" style="background:var(--green);width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Done today</div>
+            <div class="stat-val" style="color:var(--purple)" id="stat-done">—</div>
+            <div class="stat-hint">combined goals</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-done" style="background:var(--purple);width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Completion</div>
+            <div class="stat-val" style="color:var(--amber)" id="stat-rate">—</div>
+            <div class="stat-hint">today's rate</div>
+            <div class="mini-bar"><div class="mini-bar-fill" id="bar-rate" style="background:var(--amber);width:0%"></div></div>
+          </div>
         </div>
-        <div class="streak-grid">
-          <div class="streak-card">
+
+        <div class="two-col">
+          <div class="card">
             <div class="streak-hdr">
               <div class="av-lg av-a">A</div>
-              <div><div class="s-name">Ama</div><div class="s-sub" id="ama-ssub">loading...</div></div>
-              <div class="s-big" style="color:var(--pink)" id="ama-sbig">—</div>
+              <div>
+                <div class="streak-name">Ama</div>
+                <div class="streak-sub" id="ama-streak-lbl">loading...</div>
+              </div>
+              <div class="streak-num" style="color:var(--pink)" id="ama-streak-num">—</div>
             </div>
-            <div class="streak-history" id="dots-ama"></div>
+            <div class="streak-bars" id="streak-bars-ama"></div>
+            <div class="streak-hint">Last 15 days</div>
           </div>
-          <div class="streak-card">
+          <div class="card">
             <div class="streak-hdr">
               <div class="av-lg av-k">K</div>
-              <div><div class="s-name">Kwasi</div><div class="s-sub" id="kwasi-ssub">loading...</div></div>
-              <div class="s-big" style="color:var(--green)" id="kwasi-sbig">—</div>
+              <div>
+                <div class="streak-name">Kwasi</div>
+                <div class="streak-sub" id="kwasi-streak-lbl">loading...</div>
+              </div>
+              <div class="streak-num" style="color:var(--green)" id="kwasi-streak-num">—</div>
             </div>
-            <div class="streak-history" id="dots-kwasi"></div>
+            <div class="streak-bars" id="streak-bars-kwasi"></div>
+            <div class="streak-hint">Last 15 days</div>
           </div>
         </div>
       </div>
 
-      <!-- TASKS -->
+      <!-- GOALS PAGE -->
       <div id="pg-tasks" style="display:none">
-        <div class="page-header"><div class="page-title">Micro Goals</div><div class="page-sub">You can only edit your own goals — you can see each other's</div></div>
-        <div class="tasks-2">
+        <div class="page-hdr">
+          <div class="page-title">Micro Goals</div>
+          <div class="page-sub">You can only edit your own goals — you can see each other's</div>
+        </div>
+        <div class="two-col">
           <div class="task-panel">
-            <div class="tp-hdr"><div class="av-lg av-a">A</div><div class="tp-name">Ama</div><div class="tp-prog" style="color:var(--pink)" id="ap">0/0</div></div>
-            <div class="tp-bar"><div class="tp-fill" id="abar" style="background:var(--pink);width:0%"></div></div>
-            <div class="task-list" id="a-list"></div>
-            <div id="a-add-form"></div>
+            <div class="tp-hdr">
+              <div class="av-lg av-a">A</div>
+              <div class="tp-name">Ama</div>
+              <div class="tp-count" style="color:var(--pink)" id="count-ama">0/0</div>
+            </div>
+            <div class="tp-bar"><div class="tp-fill" id="fill-ama" style="background:var(--pink);width:0%"></div></div>
+            <div class="task-list" id="list-ama"></div>
+            <div id="form-ama"></div>
           </div>
           <div class="task-panel">
-            <div class="tp-hdr"><div class="av-lg av-k">K</div><div class="tp-name">Kwasi</div><div class="tp-prog" style="color:var(--green)" id="kp">0/0</div></div>
-            <div class="tp-bar"><div class="tp-fill" id="kbar" style="background:var(--green);width:0%"></div></div>
-            <div class="task-list" id="k-list"></div>
-            <div id="k-add-form"></div>
+            <div class="tp-hdr">
+              <div class="av-lg av-k">K</div>
+              <div class="tp-name">Kwasi</div>
+              <div class="tp-count" style="color:var(--green)" id="count-kwasi">0/0</div>
+            </div>
+            <div class="tp-bar"><div class="tp-fill" id="fill-kwasi" style="background:var(--green);width:0%"></div></div>
+            <div class="task-list" id="list-kwasi"></div>
+            <div id="form-kwasi"></div>
           </div>
         </div>
       </div>
 
-      <!-- KUDOS -->
+      <!-- KUDOS PAGE -->
       <div id="pg-kudos" style="display:none">
-        <div class="page-header"><div class="page-title">Send Love</div><div class="page-sub">Messages sync live between both of you</div></div>
+        <div class="page-hdr">
+          <div class="page-title">Send Love</div>
+          <div class="page-sub">Messages sync live between both of you</div>
+        </div>
         <div class="kudos-wrap">
-          <div class="kudos-feed"><div class="kf-title">Messages</div><div class="kmsgs" id="kmsgs"><div class="empty-msg">No messages yet!</div></div></div>
+          <div class="kudos-feed">
+            <div class="card-title">Messages</div>
+            <div class="kudos-msgs" id="kudos-msgs">
+              <div class="empty-note">No messages yet!</div>
+            </div>
+          </div>
           <div class="kudos-compose">
-            <div class="kc-title">Write a message</div>
-            <textarea id="kudos-txt" placeholder="You're crushing it, keep going!"></textarea>
-            <button class="send-btn" id="send-btn" onclick="sendKudos()">Send message</button>
+            <div class="card-title">Write a message</div>
+            <textarea id="kudos-input" placeholder="You're doing amazing, keep going!"></textarea>
+            <button class="kudos-send" id="kudos-send-btn" onclick="sendKudos()">Send message</button>
           </div>
         </div>
       </div>
+
     </main>
   </div>
 </div>
@@ -275,7 +347,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,san
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
+const FB = initializeApp({
   apiKey: "AIzaSyDA4dKgccFg1Y9emT5WhzK0al7BFXhEgbw",
   authDomain: "kwasi-ama-dashboard.firebaseapp.com",
   databaseURL: "https://kwasi-ama-dashboard-default-rtdb.firebaseio.com",
@@ -283,231 +355,318 @@ const firebaseConfig = {
   storageBucket: "kwasi-ama-dashboard.firebasestorage.app",
   messagingSenderId: "902554231157",
   appId: "1:902554231157:web:f0d1bb638dc6eb7277b33c"
+});
+const db = getDatabase(FB);
+
+// ─── STATE ────────────────────────────────────────────
+let ME = null;
+const live = { ama: {}, kwasi: {}, kudos: [] };
+
+const SEEDS = {
+  ama: {
+    tasks: [
+      {text:'Drink 2L water', cat:'health', done:false},
+      {text:'Morning stretch 10 min', cat:'health', done:false},
+      {text:'Read 20 pages', cat:'personal', done:false},
+      {text:'Journal 5 min', cat:'personal', done:false},
+      {text:'No phone after 10pm', cat:'personal', done:false}
+    ],
+    streak: { count: 0, lastDate: '' }
+  },
+  kwasi: {
+    tasks: [
+      {text:'Workout 30 min', cat:'health', done:false},
+      {text:'Meditate 10 min', cat:'personal', done:false},
+      {text:'Review weekly goals', cat:'work', done:false},
+      {text:'Sleep by 11pm', cat:'health', done:false},
+      {text:'Prep meals', cat:'health', done:false}
+    ],
+    streak: { count: 0, lastDate: '' }
+  }
 };
 
-const fbApp = initializeApp(firebaseConfig);
-const db = getDatabase(fbApp);
+// ─── HELPERS ──────────────────────────────────────────
+function today() {
+  return new Date().toISOString().split('T')[0]; // "2025-04-18"
+}
 
-const DL = ['M','T','W','T','F','S','S','M','T','W','T','F','S','S','T'];
-let ME = null;
-let live = { ama: {}, kwasi: {}, kudos: [] };
+function getTasks(who) {
+  const d = live[who];
+  if (!d || !d.tasks) return [];
+  return Array.isArray(d.tasks) ? d.tasks : Object.values(d.tasks);
+}
 
-// ── LOGIN ────────────────────────────────────────────────
+function getStreak(who) {
+  const d = live[who];
+  return (d && d.streak) ? d.streak : { count: 0, lastDate: '' };
+}
+
+function toast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || '#1A1A1A';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ─── STREAK AUTO-LOGIC ─────────────────────────────────
+// Streaks work automatically:
+// - When ALL your goals for the day are done → streak increases by 1
+// - This is checked once per day (tracked by date)
+// - If you don't complete all goals, streak resets to 0 the next day
+async function checkAndUpdateStreak(who) {
+  const tasks = getTasks(who);
+  if (tasks.length === 0) return;
+  const allDone = tasks.every(t => t.done);
+  const streakData = getStreak(who);
+  const todayStr = today();
+
+  if (allDone && streakData.lastDate !== todayStr) {
+    // All done today and not already counted — increment streak
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yStr = yesterday.toISOString().split('T')[0];
+    const newCount = (streakData.lastDate === yStr) ? streakData.count + 1 : 1;
+    await set(ref(db, `users/${who}/streak`), { count: newCount, lastDate: todayStr });
+    toast('🔥 Streak updated! ' + newCount + ' day' + (newCount > 1 ? 's' : '') + ' in a row!',
+      who === 'ama' ? '#E8547A' : '#2BAE82');
+  }
+}
+
+// ─── LOGIN ────────────────────────────────────────────
 window.login = async function(who) {
   ME = who;
-  sessionStorage.setItem('ak_user', who);
+  sessionStorage.setItem('ak_me', who);
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-shell').style.display = 'block';
+  document.getElementById('app').style.display = 'block';
   await boot();
 };
 
 window.switchUser = function() {
+  set(ref(db, `presence/${ME}`), false).catch(() => {});
   ME = null;
-  sessionStorage.removeItem('ak_user');
-  set(ref(db, `presence/${ME}`), false).catch(()=>{});
+  sessionStorage.removeItem('ak_me');
   document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app-shell').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
 };
 
-// ── BOOT ─────────────────────────────────────────────────
+// ─── BOOT ─────────────────────────────────────────────
 async function boot() {
-  document.getElementById('today-lbl').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('today-lbl').textContent =
+    new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
 
-  const badge = document.getElementById('who-badge');
-  badge.className = 'who-badge ' + ME;
-  badge.innerHTML = `<div class="who-av">${ME==='ama'?'A':'K'}</div>Logged in as ${ME==='ama'?'Ama':'Kwasi'}`;
-  document.getElementById('send-btn').style.background = ME==='ama' ? '#E8547A' : '#2BAE82';
-  const mb = document.getElementById('mobile-badge');
-  if(mb){ mb.className='mobile-badge '+ME; mb.textContent=ME==='ama'?'Ama':'Kwasi'; }
-  const bns = document.getElementById('bn-switch');
-  if(bns) bns.className='bn-item';
+  // Who pill in sidebar
+  const pill = document.getElementById('who-pill');
+  pill.className = 'who-pill ' + ME;
+  pill.innerHTML = `<div class="who-dot">${ME === 'ama' ? 'A' : 'K'}</div>Logged in as ${ME === 'ama' ? 'Ama' : 'Kwasi'}`;
 
-  // presence
+  // Send button color
+  document.getElementById('kudos-send-btn').style.background = ME === 'ama' ? '#E8547A' : '#2BAE82';
+
+  // Presence
   await set(ref(db, `presence/${ME}`), true);
   window.addEventListener('beforeunload', () => set(ref(db, `presence/${ME}`), false));
 
-  // seed if first time
+  // Seed data if first time
   const snap = await get(ref(db, `users/${ME}`));
   if (!snap.exists()) {
-    const seeds = {
-      ama: { dots:[1,1,1,0,1,1,1,1,1,0,1,1,0,1,1], tasks:[{text:'Drink 2L water',cat:'health',done:false},{text:'Morning stretch 10 min',cat:'health',done:false},{text:'Read 20 pages',cat:'personal',done:false},{text:'Journal 5 min',cat:'personal',done:false},{text:'No phone after 10pm',cat:'personal',done:false}] },
-      kwasi: { dots:[1,0,1,1,0,1,1,0,1,1,1,0,1,1,1], tasks:[{text:'Workout 30 min',cat:'health',done:false},{text:'Meditate 10 min',cat:'personal',done:false},{text:'Review weekly goals',cat:'work',done:false},{text:'Sleep by 11pm',cat:'health',done:false},{text:'Prep meals',cat:'health',done:false}] }
-    };
-    await set(ref(db, `users/${ME}`), seeds[ME]);
+    await set(ref(db, `users/${ME}`), SEEDS[ME]);
   }
 
-  // live listeners
-  onValue(ref(db,'users/ama'), s => { live.ama = s.val()||{}; renderAll(); });
-  onValue(ref(db,'users/kwasi'), s => { live.kwasi = s.val()||{}; renderAll(); });
-  onValue(ref(db,'kudos'), s => {
+  // Live listeners
+  onValue(ref(db, 'users/ama'), s => {
+    live.ama = s.val() || {};
+    renderAll();
+  });
+  onValue(ref(db, 'users/kwasi'), s => {
+    live.kwasi = s.val() || {};
+    renderAll();
+  });
+  onValue(ref(db, 'kudos'), s => {
     const v = s.val();
-    live.kudos = v ? Object.values(v).sort((a,b)=>b.ts-a.ts) : [];
+    live.kudos = v ? Object.values(v).sort((a, b) => b.ts - a.ts) : [];
     renderKudos();
   });
-  onValue(ref(db,'presence'), s => {
-    const p = s.val()||{};
-    document.getElementById('dot-ama').className   = 'online-dot'+(p.ama  ?' on':'');
-    document.getElementById('dot-kwasi').className = 'online-dot'+(p.kwasi?' on':'');
+  onValue(ref(db, 'presence'), s => {
+    const p = s.val() || {};
+    document.getElementById('online-ama').className   = 'online-dot' + (p.ama   ? ' on' : '');
+    document.getElementById('online-kwasi').className = 'online-dot' + (p.kwasi ? ' on' : '');
   });
 
   goTo('overview');
 }
 
-// ── NAV ───────────────────────────────────────────────────
-const PAGE_TITLES = {overview:'Overview', tasks:'Micro Goals', kudos:'Send Love'};
+// ─── NAVIGATION ───────────────────────────────────────
 window.goTo = function(pg) {
-  ['overview','tasks','kudos'].forEach(p => {
-    document.getElementById('pg-'+p).style.display = p===pg?'block':'none';
-    document.getElementById('nav-'+p).className = 'nav-item'+(p===pg?' active-'+ME:'');
-    const bn = document.getElementById('bn-'+p);
-    if(bn) bn.className = 'bn-item'+(p===pg?' active-'+ME:'');
+  ['overview', 'tasks', 'kudos'].forEach(p => {
+    document.getElementById('pg-' + p).style.display = p === pg ? 'block' : 'none';
+    const btn = document.getElementById('nav-' + p);
+    btn.className = 'nav-btn' + (p === pg ? ' on-' + ME : '');
   });
-  const mt = document.getElementById('mobile-page-title');
-  if(mt) mt.textContent = PAGE_TITLES[pg]||'';
 };
 
-// ── HELPERS ───────────────────────────────────────────────
-function calcStreak(dots) {
-  if (!dots||!dots.length) return 0;
-  let n=0; for(let i=dots.length-1;i>=0;i--){if(dots[i])n++;else break;} return n;
-}
-function getTasks(who) {
-  const d=live[who]; if(!d||!d.tasks) return [];
-  return Array.isArray(d.tasks)?d.tasks:Object.values(d.tasks);
-}
-function toast(msg,color){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.style.background=color||'#1A1A1A';
-  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);
-}
-
-// ── RENDER ────────────────────────────────────────────────
+// ─── RENDER ───────────────────────────────────────────
 function renderAll() {
   renderStreaks();
   renderTasks();
-  renderAddForms();
+  renderForms();
   renderStats();
 }
 
 function renderStreaks() {
-  ['ama','kwasi'].forEach(who => {
-    const dots = (live[who]||{}).dots||[];
-    const s = calcStreak(dots);
-    const el = document.getElementById('dots-'+who);
-    if(el){
-      el.innerHTML='';
-      dots.forEach(on=>{
-        const b=document.createElement('div');
-        b.className='sh-bar '+(on?'sh-on-'+who[0]:'sh-off');
-        el.appendChild(b);
-      });
+  ['ama', 'kwasi'].forEach(who => {
+    const streakData = getStreak(who);
+    const count = streakData.count || 0;
+    const color = who === 'ama' ? 'var(--pink)' : 'var(--green)';
+
+    // Build 15-bar history from streak count (visual representation)
+    const barsEl = document.getElementById('streak-bars-' + who);
+    if (barsEl) {
+      barsEl.innerHTML = '';
+      for (let i = 0; i < 15; i++) {
+        const b = document.createElement('div');
+        b.className = 's-bar ' + (i >= 15 - count ? 'on-' + who[0] : 'off');
+        barsEl.appendChild(b);
+      }
     }
-    document.getElementById(who+'-sbig').textContent=s;
-    document.getElementById(who+'-ssub').textContent=s+' day streak';
-    document.getElementById('sb-'+who).textContent=s+' 🔥';
-    document.getElementById('sv-'+(who==='ama'?'as':'ks')).textContent=s;
-    document.getElementById('sfb-'+(who==='ama'?'as':'ks')).style.width=Math.min(100,s*10)+'%';
+
+    document.getElementById(who + '-streak-num').textContent = count;
+    document.getElementById(who + '-streak-lbl').textContent = count + ' day streak';
+    document.getElementById('sb-' + who).textContent = count + ' 🔥';
+    document.getElementById('stat-' + (who === 'ama' ? 'as' : 'ks')).textContent = count;
+    document.getElementById('bar-' + (who === 'ama' ? 'as' : 'ks')).style.width = Math.min(100, count * 10) + '%';
   });
 }
 
-function renderTasks(){
-  ['ama','kwasi'].forEach(who=>{
-    const tasks=getTasks(who);
-    const isMine=who===ME;
-    const el=document.getElementById(who[0]+'-list');
-    const cc=who==='ama'?'ca':'ck';
-    el.innerHTML = tasks.length
-      ? tasks.map((t,i)=>`
-          <div class="t-item${isMine?' mine':''}" ${isMine?`onclick="window._toggleTask('${who}',${i})"`:''}> 
-            <div class="t-check ${t.done?cc:''}">
-              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3L3.5 5.5L8 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </div>
-            <span class="t-txt${t.done?' done':''}">${t.text}</span>
-            <span class="cpill c-${t.cat}">${t.cat}</span>
-            ${isMine?`<button class="t-del" onclick="event.stopPropagation();window._delTask('${who}',${i})">×</button>`:''}
-          </div>`).join('')
-      : '<div class="empty-msg">No goals yet!</div>';
-    const done=tasks.filter(t=>t.done).length, total=tasks.length;
-    const pct=total?Math.round(done/total*100):0;
-    document.getElementById(who[0]+'p').textContent=done+'/'+total;
-    document.getElementById(who[0]+'bar').style.width=pct+'%';
-  });
-}
+function renderTasks() {
+  ['ama', 'kwasi'].forEach(who => {
+    const tasks = getTasks(who);
+    const isMine = who === ME;
+    const checkCls = who === 'ama' ? 'done-a' : 'done-k';
+    const listEl = document.getElementById('list-' + who);
 
-function renderAddForms(){
-  ['ama','kwasi'].forEach(who=>{
-    const el=document.getElementById(who[0]+'-add-form');
-    if(who===ME){
-      const cls=who==='ama'?'btn-a':'btn-k';
-      el.innerHTML=`<div class="add-form">
-        <div class="add-inputs">
-          <input id="${who[0]}-in" placeholder="Add a micro goal..."/>
-          <select id="${who[0]}-cat"><option value="health">Health</option><option value="work">Work</option><option value="personal">Personal</option><option value="social">Social</option></select>
-        </div>
-        <button class="${cls}" onclick="window._addTask('${who}')">Add goal</button>
-      </div>`;
-      document.getElementById(who[0]+'-in').addEventListener('keydown',e=>{if(e.key==='Enter')window._addTask(who)});
+    if (!tasks.length) {
+      listEl.innerHTML = '<div class="empty-note">No goals yet!</div>';
     } else {
-      el.innerHTML=`<div class="locked-note">You can see ${who==='ama'?'Ama':'Kwasi'}'s goals but can't edit them</div>`;
+      listEl.innerHTML = tasks.map((t, i) => `
+        <div class="t-item ${isMine ? 'editable' : ''}" ${isMine ? `onclick="_toggle('${who}',${i})"` : ''}>
+          <div class="t-check ${t.done ? checkCls : ''}">
+            <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+              <path d="M1 3L3.5 5.5L8 1" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="t-text ${t.done ? 'done' : ''}">${t.text}</span>
+          <span class="cat-pill cat-${t.cat}">${t.cat}</span>
+          ${isMine ? `<button class="t-del" onclick="event.stopPropagation();_del('${who}',${i})">×</button>` : ''}
+        </div>`).join('');
+    }
+
+    const done = tasks.filter(t => t.done).length;
+    const total = tasks.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('count-' + who).textContent = done + '/' + total;
+    document.getElementById('fill-' + who).style.width = pct + '%';
+  });
+}
+
+function renderForms() {
+  ['ama', 'kwasi'].forEach(who => {
+    const el = document.getElementById('form-' + who);
+    if (who === ME) {
+      const btnCls = who === 'ama' ? 'btn-ama' : 'btn-kwasi';
+      el.innerHTML = `
+        <div class="add-row">
+          <input id="input-${who}" placeholder="Add a micro goal..." />
+          <select id="cat-${who}">
+            <option value="health">Health</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="social">Social</option>
+          </select>
+          <button class="${btnCls}" onclick="_add('${who}')">Add</button>
+        </div>`;
+      document.getElementById('input-' + who).addEventListener('keydown', e => {
+        if (e.key === 'Enter') _add(who);
+      });
+    } else {
+      el.innerHTML = `<div class="readonly-note">You can see ${who === 'ama' ? "Ama's" : "Kwasi's"} goals but can't edit them</div>`;
     }
   });
 }
 
-function renderStats(){
-  const all=[...getTasks('ama'),...getTasks('kwasi')];
-  const done=all.filter(t=>t.done).length, total=all.length;
-  const pct=total?Math.round(done/total*100):0;
-  document.getElementById('sv-done').textContent=done;
-  document.getElementById('sv-rate').textContent=pct+'%';
-  document.getElementById('sfb-done').style.width=Math.min(100,total?done/total*100:0)+'%';
-  document.getElementById('sfb-rate').style.width=pct+'%';
+function renderStats() {
+  const all = [...getTasks('ama'), ...getTasks('kwasi')];
+  const done = all.filter(t => t.done).length;
+  const total = all.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-rate').textContent = pct + '%';
+  document.getElementById('bar-done').style.width = Math.min(100, total ? done / total * 100 : 0) + '%';
+  document.getElementById('bar-rate').style.width = pct + '%';
 }
 
-function renderKudos(){
-  const el=document.getElementById('kmsgs');
-  if(!live.kudos.length){el.innerHTML='<div class="empty-msg">No messages yet!</div>';return;}
-  el.innerHTML=live.kudos.slice(0,30).map(k=>`
-    <div class="kmsg ${k.from==='Ama'?'fa':'fk'}">
-      <div class="kmsg-txt">${k.txt}</div>
-      <div class="kmsg-meta">from ${k.from} · ${k.time}</div>
+function renderKudos() {
+  const el = document.getElementById('kudos-msgs');
+  if (!live.kudos.length) {
+    el.innerHTML = '<div class="empty-note">No messages yet!</div>';
+    return;
+  }
+  el.innerHTML = live.kudos.slice(0, 30).map(k => `
+    <div class="k-msg from-${k.from}">
+      <div class="k-msg-text">${k.text}</div>
+      <div class="k-msg-meta">from ${k.from === 'ama' ? 'Ama' : 'Kwasi'} · ${k.time}</div>
     </div>`).join('');
 }
 
-// ── TASK ACTIONS (exposed to inline onclick) ──────────────
-window._toggleTask = async function(who,i){
-  const tasks=[...getTasks(who)];
-  tasks[i]={...tasks[i],done:!tasks[i].done};
-  await set(ref(db,`users/${who}/tasks`),tasks);
-  if(tasks[i].done) toast('Goal crushed! 💪',who==='ama'?'#E8547A':'#2BAE82');
+// ─── ACTIONS (called from inline onclick) ─────────────
+window._toggle = async function(who, i) {
+  const tasks = [...getTasks(who)];
+  tasks[i] = { ...tasks[i], done: !tasks[i].done };
+  await set(ref(db, `users/${who}/tasks`), tasks);
+  if (tasks[i].done) toast('Goal crushed! 💪', who === 'ama' ? '#E8547A' : '#2BAE82');
+  // Check if all goals are now done → auto-update streak
+  const allDone = tasks.every(t => t.done);
+  if (allDone) await checkAndUpdateStreak(who);
 };
 
-window._delTask = async function(who,i){
-  const tasks=[...getTasks(who)];
-  tasks.splice(i,1);
-  await set(ref(db,`users/${who}/tasks`),tasks);
+window._del = async function(who, i) {
+  const tasks = [...getTasks(who)];
+  tasks.splice(i, 1);
+  await set(ref(db, `users/${who}/tasks`), tasks);
 };
 
-window._addTask = async function(who){
-  const inp=document.getElementById(who[0]+'-in');
-  const cat=document.getElementById(who[0]+'-cat').value;
-  const text=inp.value.trim(); if(!text)return;
-  const tasks=[...getTasks(who),{text,cat,done:false}];
-  await set(ref(db,`users/${who}/tasks`),tasks);
-  inp.value='';
-  toast('Goal added!',who==='ama'?'#E8547A':'#2BAE82');
+window._add = async function(who) {
+  const inp = document.getElementById('input-' + who);
+  const cat = document.getElementById('cat-' + who).value;
+  const text = inp.value.trim();
+  if (!text) return;
+  const tasks = [...getTasks(who), { text, cat, done: false }];
+  await set(ref(db, `users/${who}/tasks`), tasks);
+  inp.value = '';
+  toast('Goal added!', who === 'ama' ? '#E8547A' : '#2BAE82');
 };
 
-// ── KUDOS ─────────────────────────────────────────────────
-window.sendKudos = async function(){
-  const txt=document.getElementById('kudos-txt').value.trim(); if(!txt)return;
-  await push(ref(db,'kudos'),{from:ME==='ama'?'Ama':'Kwasi',txt,ts:Date.now(),time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
-  document.getElementById('kudos-txt').value='';
-  toast('Sent! 💌',ME==='ama'?'#E8547A':'#2BAE82');
+window.sendKudos = async function() {
+  const text = document.getElementById('kudos-input').value.trim();
+  if (!text) return;
+  await push(ref(db, 'kudos'), {
+    from: ME,
+    text,
+    ts: Date.now(),
+    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+  });
+  document.getElementById('kudos-input').value = '';
+  toast('Sent! 💌', ME === 'ama' ? '#E8547A' : '#2BAE82');
 };
 
-// ── AUTO-LOGIN ─────────────────────────────────────────────
-const saved=sessionStorage.getItem('ak_user');
-if(saved){ME=saved;document.getElementById('login-screen').style.display='none';document.getElementById('app-shell').style.display='block';boot();}
+// ─── AUTO-LOGIN ───────────────────────────────────────
+const saved = sessionStorage.getItem('ak_me');
+if (saved) {
+  ME = saved;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  boot();
+}
 </script>
 </body>
 </html>
